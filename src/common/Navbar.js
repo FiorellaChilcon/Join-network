@@ -17,7 +17,7 @@ export default function Navbar() {
 
   const handleClick = () => {
     if (isMobile) {
-      navbar.current.classList.add('flex');
+      navbar.current.classList.remove('flex');
     }
   };
 
