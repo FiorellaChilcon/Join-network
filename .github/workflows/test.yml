@@ -1,0 +1,197 @@
+name: Node.js CI
+
+on: [push]
+
+jobs:
+  buildAndTests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: tests Node ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - uses: actions/cache@v2
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node_modules-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node_modules-
+    - run: yarn install --frozen-lockfile
+    - run: yarn ember-intl-analyzer
+    - run: yarn test
+      env:
+        CI: true
+
+  deploy-staging:
+    needs: buildAndTests
+    if: github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: tests Node ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - uses: actions/cache@v2
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node_modules-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node_modules-
+
+    - name: Version Check
+      uses: EndBug/version-check@v1.5.0
+      with:
+        diff-search: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - run: yarn
+    - run: yarn deploy
+      env:
+        LFC_AWS_KEY_ID: ${{ secrets.LFC_AWS_KEY_ID }}
+        LFC_AWS_KEY_SECRET: ${{ secrets.LFC_AWS_KEY_SECRET }}
+        LFC_AWS_S3_BUCKET: ${{ secrets.LFC_AWS_S3_BUCKET }}
+        LFC_AWS_S3_REGION: ${{ secrets.LFC_AWS_S3_REGION }}
+        LFC_APP_HOST: ${{ secrets.LFC_APP_HOST }}
+        SERVER_TOKEN_ENDPOINT: ${{ secrets.SERVER_TOKEN_ENDPOINT_STAGING }}
+        BACKEND_HOST: ${{ secrets.BACKEND_HOST }}
+        GO1_PORTAL_URL: ${{ secrets.GO1_PORTAL_URL_STAGING }}
+        LFC_APP_ENV: ${{ secrets.LFC_APP_ENV }}
+        LFC_APP_RELEASE_VERSION: ${{ steps.check.outputs.version }}
+        LFC_APP_SENTRY_DSN: ${{ secrets.LFC_APP_SENTRY_DSN }}
+        LFC_APP_IP_API_TOKEN: ${{ secrets.LFC_APP_IP_API_TOKEN }}
+        GO1_REVOKE_TOKEN_ENDPOINT: ${{ secrets.GO1_REVOKE_TOKEN_ENDPOINT }}
+        LFC_MARKETING_SITE: ${{ secrets.LFC_MARKETING_SITE }}
+        LFC_AWS_CLOUDFRONT_ID: ${{ secrets.LFC_AWS_CLOUDFRONT_ID }}
+        NEW_RELIC_APP_ID: ${{ secrets.NEW_RELIC_APP_ID_QA }}
+        NEW_RELIC_APP_LICENSE: ${{ secrets.NEW_RELIC_APP_LICENSE }}
+        LFC_GOOGLE_TAG_MANAGER_ID: ${{ secrets.LFC_GOOGLE_TAG_MANAGER_ID_STAGING }}
+        LFC_GOOGLE_TAG_MANAGER_PREVIEW: ${{ secrets.LFC_GOOGLE_TAG_MANAGER_PREVIEW_STAGING }}
+        LFC_GOOGLE_TAG_MANAGER_AUTH: ${{ secrets.LFC_GOOGLE_TAG_MANAGER_AUTH_STAGING }}
+        LFC_BACKEND_HOST: ${{ secrets.LFC_BACKEND_HOST_STAGING }}
+        PUSHER_API_KEY: ${{ secrets.PUSHER_API_KEY }}
+        STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+        JOTFORM_FEEDBACK_STAGING: ${{ secrets.JOTFORM_FEEDBACK_STAGING }}
+        PREVIEW_COURSES_BUCKET_URL: ${{ secrets.PREVIEW_COURSES_BUCKET_URL_STAGING }}
+        HOME_PREVIEW_BUCKET_URL: ${{ secrets.HOME_PREVIEW_BUCKET_URL_STAGING }}
+        LFC_AMPLITUDE_KEY: ${{ secrets.LFC_AMPLITUDE_KEY_STAGING }}
+        OLD_LO_IDS: ${{ secrets.OLD_LO_IDS }}
+        CSP_ENV: staging
+        CI: true
+
+  deploy-qa:
+    needs: buildAndTests
+    if: github.ref == 'refs/heads/qa'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: tests Node ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - uses: actions/cache@v2
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node_modules-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node_modules-
+
+    - run: yarn
+    - run: yarn deploy
+      env:
+        LFC_AWS_KEY_ID: ${{ secrets.LFC_AWS_KEY_ID }}
+        LFC_AWS_KEY_SECRET: ${{ secrets.LFC_AWS_KEY_SECRET }}
+        LFC_AWS_S3_BUCKET: ${{ secrets.LFC_AWS_S3_BUCKET_QA }}
+        LFC_AWS_S3_REGION: ${{ secrets.LFC_AWS_S3_REGION }}
+        LFC_APP_HOST: ${{ secrets.LFC_APP_HOST }}
+        SERVER_TOKEN_ENDPOINT: ${{ secrets.SERVER_TOKEN_ENDPOINT_STAGING }}
+        BACKEND_HOST: ${{ secrets.BACKEND_HOST }}
+        GO1_PORTAL_URL: ${{ secrets.GO1_PORTAL_URL_STAGING }}
+        LFC_APP_ENV: ${{ secrets.LFC_APP_ENV }}
+        LFC_APP_RELEASE_VERSION: ${{ steps.check.outputs.version }}
+        LFC_APP_SENTRY_DSN: ${{ secrets.LFC_APP_SENTRY_DSN }}
+        LFC_APP_IP_API_TOKEN: ${{ secrets.LFC_APP_IP_API_TOKEN }}
+        GO1_REVOKE_TOKEN_ENDPOINT: ${{ secrets.GO1_REVOKE_TOKEN_ENDPOINT }}
+        LFC_MARKETING_SITE: ${{ secrets.LFC_MARKETING_SITE }}
+        LFC_AWS_CLOUDFRONT_ID: ${{ secrets.LFC_AWS_CLOUDFRONT_ID_QA }}
+        NEW_RELIC_APP_ID: ${{ secrets.NEW_RELIC_APP_ID_QA }}
+        NEW_RELIC_APP_LICENSE: ${{ secrets.NEW_RELIC_APP_LICENSE }}
+        LFC_GOOGLE_TAG_MANAGER_ID: ${{ secrets.LFC_GOOGLE_TAG_MANAGER_ID_STAGING }}
+        LFC_GOOGLE_TAG_MANAGER_PREVIEW: ${{ secrets.LFC_GOOGLE_TAG_MANAGER_PREVIEW_STAGING }}
+        LFC_GOOGLE_TAG_MANAGER_AUTH: ${{ secrets.LFC_GOOGLE_TAG_MANAGER_AUTH_STAGING }}
+        LFC_BACKEND_HOST: ${{ secrets.LFC_BACKEND_HOST_QA }}
+        PUSHER_API_KEY: ${{ secrets.PUSHER_API_KEY }}
+        STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+        JOTFORM_FEEDBACK_STAGING: ${{ secrets.JOTFORM_FEEDBACK_STAGING }}
+        PREVIEW_COURSES_BUCKET_URL: ${{ secrets.PREVIEW_COURSES_BUCKET_URL_STAGING }}
+        HOME_PREVIEW_BUCKET_URL: ${{ secrets.HOME_PREVIEW_BUCKET_URL_STAGING }}
+        LFC_AMPLITUDE_KEY: ${{ secrets.LFC_AMPLITUDE_KEY_STAGING }}
+        OLD_LO_IDS: ${{ secrets.OLD_LO_IDS }}
+        CSP_ENV: qa
+        CI: true
+
+  deploy-production:
+    needs: buildAndTests
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: tests Node ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - uses: actions/cache@v2
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node_modules-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node_modules-
+
+    - run: yarn
+    - run: yarn deploy
+      env:
+        LFC_AWS_KEY_ID: ${{ secrets.LFC_AWS_KEY_ID }}
+        LFC_AWS_KEY_SECRET: ${{ secrets.LFC_AWS_KEY_SECRET }}
+        LFC_AWS_S3_BUCKET: ${{ secrets.LFC_AWS_S3_BUCKET_PRODUCTION }}
+        LFC_AWS_S3_REGION: ${{ secrets.LFC_AWS_S3_REGION }}
+        LFC_APP_HOST: ${{ secrets.LFC_APP_HOST_PRODUCTION }}
+        SERVER_TOKEN_ENDPOINT: ${{ secrets.SERVER_TOKEN_ENDPOINT }}
+        BACKEND_HOST: ${{ secrets.BACKEND_HOST }}
+        GO1_PORTAL_URL: ${{ secrets.GO1_PORTAL_URL_PRODUCTION }}
+        LFC_APP_ENV: ${{ secrets.LFC_APP_ENV_PRODUCTION }}
+        LFC_APP_RELEASE_VERSION: ${{ steps.check.outputs.version }}
+        LFC_APP_SENTRY_DSN: ${{ secrets.LFC_APP_SENTRY_DSN }}
+        LFC_APP_IP_API_TOKEN: ${{ secrets.LFC_APP_IP_API_TOKEN }}
+        GO1_REVOKE_TOKEN_ENDPOINT: ${{ secrets.GO1_REVOKE_TOKEN_ENDPOINT }}
+        LFC_AWS_CLOUDFRONT_ID: ${{ secrets.LFC_AWS_CLOUDFRONT_ID_PRODUCTION }}
+        LFC_MARKETING_SITE: ${{ secrets.LFC_MARKETING_SITE }}
+        NEW_RELIC_APP_ID: ${{ secrets.NEW_RELIC_APP_ID_PRODUCTION }}
+        NEW_RELIC_APP_LICENSE: ${{ secrets.NEW_RELIC_APP_LICENSE }}
+        LFC_GOOGLE_TAG_MANAGER_ID: ${{ secrets.LFC_GOOGLE_TAG_MANAGER_ID }}
+        LFC_GOOGLE_TAG_MANAGER_PREVIEW: ${{ secrets.LFC_GOOGLE_TAG_MANAGER_PREVIEW }}
+        LFC_GOOGLE_TAG_MANAGER_AUTH: ${{ secrets.LFC_GOOGLE_TAG_MANAGER_AUTH }}
+        LFC_BACKEND_HOST: ${{ secrets.LFC_BACKEND_HOST_PRODUCTION }}
+        PUSHER_API_KEY: ${{ secrets.PUSHER_API_KEY_PRODUCTION }}
+        STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY_PRODUCTION }}
+        LFC_ENV: production
+        JOTFORM_FEEDBACK_PRODUCTION: ${{ secrets.JOTFORM_FEEDBACK_PRODUCTION }}
+        PREVIEW_COURSES_BUCKET_URL: ${{ secrets.PREVIEW_COURSES_BUCKET_URL_PRODUCTION }}
+        HOME_PREVIEW_BUCKET_URL: ${{ secrets.HOME_PREVIEW_BUCKET_URL_PRODUCTION }}
+        LFC_AMPLITUDE_KEY: ${{ secrets.LFC_AMPLITUDE_KEY_PRODUCTION }}
+        OLD_LO_IDS: ${{ secrets.OLD_LO_IDS }}
+        CSP_ENV: production
+        CI: true
