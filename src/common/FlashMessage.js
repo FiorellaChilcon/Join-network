@@ -1,7 +1,7 @@
 import React, {  useEffect } from 'react';
 
 export default function FlashMessage(props) {
-  const { flashMessage, removeFlashMessage, type } = props;
+  const { flashMessage, removeFlashMessage } = props;
   useEffect(() => {
     const timerId = setTimeout(() => {
       removeFlashMessage();
@@ -10,6 +10,6 @@ export default function FlashMessage(props) {
   }, [flashMessage, removeFlashMessage]);
 
   return (
-    <div className={`flash-message ${type}`}>{flashMessage.message}</div>
+    <div className={`flash-message ${flashMessage.type}`}>{flashMessage.message}</div>
   );
 }

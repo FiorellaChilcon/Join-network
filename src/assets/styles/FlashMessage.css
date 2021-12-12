@@ -1,11 +1,12 @@
 .flash-message {
   position: absolute;
-  bottom: 0;
+  top: 0;
   right: 0;
   margin: 20px;
   padding: 10px;
   color: white;
   border-radius: 5px;
+  z-index: 1;
 }
 
 .flash-message.error {
@@ -13,5 +14,5 @@
 }
 
 .flash-message.success {
-  background-color: greenyellow;
+  background-color: rgb(12, 228, 113);
 }

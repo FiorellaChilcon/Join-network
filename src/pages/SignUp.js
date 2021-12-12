@@ -2,40 +2,33 @@ import React, { useState, useEffect } from 'react';
 import FlashMessage from '../common/FlashMessage';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useForm } from '../customHooks/useForm';
+import { NavLink } from 'react-router-dom';
 
 export default function SignUp() {
   const navigate = useNavigate()
+  const [formValues, setFormValues] = useForm({ email: '', password: '' });
   const [isDisabled, setIsDisabled] = useState(true);
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { signUp } = useAuth();
 
   useEffect(() => {
-    const disable = !email || !password || isLoading;
+    const disable = !formValues.email || !formValues.password || isLoading;
     setIsDisabled(disable);
     return () => { setIsDisabled(disable); };
-  }, [email, password, isLoading]);
-
-  const handleChangeEmail = ({ target }) => {
-    setEmail(target.value);
-  }
-
-  const handleChangePassword = ({ target }) => {
-    setPassword(target.value);
-  }
+  }, [formValues, isLoading]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email && password) {
+    if (formValues.email && formValues.password) {
       setIsLoading(true)
       try {
-        await signUp(email, password);
+        await signUp(formValues.email, formValues.password);
         setIsLoading(false)
         return navigate('/');
       } catch(error) {
-        setErrorMessage({ message: error.message, date: Date.now() });
+        setErrorMessage({ message: error.message, date: Date.now(), type: 'error' });
         setIsLoading(false)
       }
     }
@@ -46,21 +39,25 @@ export default function SignUp() {
   }
 
   return (
-    <div>
+    <div className='sign-container'>
       <h1 className='sign-title'>Sign Up</h1>
       <form className='sign-form' onSubmit={handleSubmit}>
         <input
           autoComplete='username'
           placeholder='Email'
           type='email'
-          onChange={handleChangeEmail}
+          name='email'
+          value={formValues.email}
+          onChange={setFormValues}
           disabled={isLoading}
         />
         <input
           autoComplete='new-password'
           placeholder='Password'
           type='password'
-          onChange={handleChangePassword}
+          name='password'
+          value={formValues.password}
+          onChange={setFormValues}
           disabled={isLoading}
         />
         <input
@@ -69,9 +66,11 @@ export default function SignUp() {
           disabled={isDisabled}
         />
       </form>
+      <div className='font-small'>
+        Have an account? <NavLink to='/sign-in'>Log in</NavLink>
+      </div>
       { errorMessage && 
         <FlashMessage
-          type='error'
           flashMessage={errorMessage}
           removeFlashMessage={removeErrorMessage}
         />

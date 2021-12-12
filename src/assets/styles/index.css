@@ -1,6 +1,12 @@
+/* pages */
 @import './App.css';
-@import './SignUp.css';
+@import './Sign.css';
 @import './Home.css';
+@import './ForgotPassword.css';
+
+/* commons */
 @import './Navbar.css';
 @import './FlashMessage.css';
+
+/* utils */
 @import './utils.css';
