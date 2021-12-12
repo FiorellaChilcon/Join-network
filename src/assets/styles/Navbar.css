@@ -9,6 +9,7 @@ nav {
   background-color: white;
   width: 100%;
   padding: 20px 10px;
+  box-sizing: border-box;
 }
 
 nav a, nav button {

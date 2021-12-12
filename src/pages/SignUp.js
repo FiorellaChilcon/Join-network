@@ -3,10 +3,11 @@ import FlashMessage from '../common/FlashMessage';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useForm } from '../customHooks/useForm';
+import { NavLink } from 'react-router-dom';
 
 export default function SignUp() {
   const navigate = useNavigate()
-  const [formValues, setFormValues] = useForm({ email: '', password: '',});
+  const [formValues, setFormValues] = useForm({ email: '', password: '' });
   const [isDisabled, setIsDisabled] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +28,7 @@ export default function SignUp() {
         setIsLoading(false)
         return navigate('/');
       } catch(error) {
-        setErrorMessage({ message: error.message, date: Date.now() });
+        setErrorMessage({ message: error.message, date: Date.now(), type: 'error' });
         setIsLoading(false)
       }
     }
@@ -38,7 +39,7 @@ export default function SignUp() {
   }
 
   return (
-    <div>
+    <div className='sign-container'>
       <h1 className='sign-title'>Sign Up</h1>
       <form className='sign-form' onSubmit={handleSubmit}>
         <input
@@ -65,9 +66,11 @@ export default function SignUp() {
           disabled={isDisabled}
         />
       </form>
+      <div className='font-small'>
+        Have an account? <NavLink to='/sign-in'>Log in</NavLink>
+      </div>
       { errorMessage && 
         <FlashMessage
-          type='error'
           flashMessage={errorMessage}
           removeFlashMessage={removeErrorMessage}
         />
