@@ -3,6 +3,9 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
+  updateProfile,
+  updateEmail,
+  updatePassword,
   signOut
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
@@ -33,6 +36,18 @@ export default function AuthProvider({ children }) {
     return sendPasswordResetEmail(auth, email);
   }
 
+  function updateAccount(name) {
+    return updateProfile(currentUser, { displayName: name });
+  }
+
+  function updateUserEmail(email) {
+    return updateEmail(currentUser, email);
+  }
+
+  function updateUserPassword(password) {
+    return updatePassword(currentUser, password);
+  }
+
   useEffect(() => {
     const unsusbscribe = auth.onAuthStateChanged(user => {
       setCurrentUser(user);
@@ -46,6 +61,9 @@ export default function AuthProvider({ children }) {
     signUp,
     logIn,
     logOut,
+    updateAccount,
+    updateUserEmail,
+    updateUserPassword,
     resetPassword
   };
 

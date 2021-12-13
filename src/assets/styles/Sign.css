@@ -8,7 +8,6 @@
   justify-content: center;
   align-items: center;
   font-size: 14px;
-  width: 100%;
 }
 
 .sign-container {
@@ -19,6 +18,7 @@
 }
 
 .sign-form input[type="email"],
+.sign-form input[type="text"],
 .sign-form input[type="password"] {
   padding: 10px;
   width: 250px;
@@ -26,9 +26,6 @@
   border: 1px solid rgb(184, 183, 183);
   background-color: rgb(255, 255, 255);
   box-sizing: border-box;
-}
-
-.sign-form input[type="email"] {
   margin-bottom: 15px;
 }
 
@@ -41,6 +38,11 @@
   background-color: rgb(12, 228, 113);
   color: white;
   font-weight: bold;
+}
+
+.sign-form label {
+  align-self: flex-start;
+  margin-bottom: 10px;
 }
 
 .sign-form input:disabled {
@@ -65,7 +67,12 @@
 }
 
 @media screen and (max-width: 360px) {
+  .sign-form {
+    width: 100%;
+  }
+
   .sign-form input[type="email"],
+  .sign-form input[type="text"],
   .sign-form input[type="password"] {
     width: 100%;
   }

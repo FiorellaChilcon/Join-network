@@ -3,6 +3,7 @@
 @import './Sign.css';
 @import './Home.css';
 @import './ForgotPassword.css';
+@import './EditAccount.css';
 
 /* commons */
 @import './Navbar.css';

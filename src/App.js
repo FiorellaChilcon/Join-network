@@ -1,6 +1,7 @@
 import Home from './pages/Home';
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
+import EditAccount from './pages/EditAccount';
 import Navbar from './common/Navbar';
 import ForgotPassword from './pages/ForgotPassword';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -16,6 +17,7 @@ function App() {
         <div className="app-body">
           <Routes>
             <Route path='/' element={<PrivateRoute><Home/></PrivateRoute>}/>
+            <Route path='/edit-account' element={<PrivateRoute><EditAccount/></PrivateRoute>}/>
             <Route path='/sign-up' element={<PublicRoute><SignUp/></PublicRoute>}/>
             <Route path='/sign-in' element={<PublicRoute><SignIn/></PublicRoute>}/>
             <Route path='/forgot-password' element={<PublicRoute><ForgotPassword/></PublicRoute>}/>
