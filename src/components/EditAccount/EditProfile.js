@@ -14,7 +14,6 @@ export default function EditProfile(props) {
 
   useEffect(() => {
     const initialObj = initialValues();
-    console.log(initialObj)
     const formHasChanges = Object.keys(initialObj).some((field) => {
       return formValues[field].trim() && formValues[field].trim() !== initialObj[field];
     });
