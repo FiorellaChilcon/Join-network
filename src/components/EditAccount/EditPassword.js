@@ -10,14 +10,11 @@ export default function EditPassword(props) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const disable = !_formHasChanges() || isLoading;
+    const formHasChanges = formValues.password && formValues.confirmPassword && (formValues.password === formValues.confirmPassword);
+    const disable = !formHasChanges || isLoading;
     setIsDisabled(disable);
     return () => { setIsDisabled(disable); };
   }, [formValues, isLoading]);
-
-  const _formHasChanges = () => {
-    return formValues.password && formValues.confirmPassword && (formValues.password === formValues.confirmPassword);
-  }
 
   const handleFormValuesSubmit = async (e) => {
     e.preventDefault();

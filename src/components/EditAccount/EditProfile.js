@@ -1,29 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useForm } from '../../customHooks/useForm';
 
 export default function EditProfile(props) {
   const { onSetNewMessage } = props;
   const { updateAccount, updateUserEmail, currentUser } = useAuth();
-  const initialValues = { displayName: (currentUser.displayName || ''), email: currentUser.email }
+  const initialValues = useCallback(() => {
+    return  { displayName: (currentUser.displayName || ''), email: currentUser.email };
+  }, [currentUser]);
   const [formValues, setFormValues] = useForm(initialValues);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const disable = !_formHasChanges() || isLoading;
+    const initialObj = initialValues();
+    console.log(initialObj)
+    const formHasChanges = Object.keys(initialObj).some((field) => {
+      return formValues[field].trim() && formValues[field].trim() !== initialObj[field];
+    });
+    const disable = !formHasChanges || isLoading;
     setIsDisabled(disable);
     return () => { setIsDisabled(disable); };
-  }, [formValues, isLoading]);
+  }, [formValues, isLoading, initialValues]);
 
-  const _formHasChanges = () => {
-    return Object.keys(initialValues).some((field) => {
-      return _fieldHasChanges(field);
-    });
-  }
 
   const _fieldHasChanges = (field) => {
-    return formValues[field].trim() && formValues[field].trim() !== initialValues[field];
+    const initialObj = initialValues();
+    return formValues[field].trim() && formValues[field].trim() !== initialObj[field];
   }
 
   const handleFormValuesSubmit = async (e) => {
