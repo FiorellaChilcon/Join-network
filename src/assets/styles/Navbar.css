@@ -8,15 +8,20 @@ nav {
   z-index: 1;
   background-color: white;
   width: 100%;
-  padding: 20px 10px;
+  padding: 0 10px;
   box-sizing: border-box;
+  justify-content: space-between;
 }
 
-nav a, nav button {
+nav a, nav button, nav .logo div {
   text-decoration: none;
   margin: 0 10px;
   color: rgb(26, 26, 26);
   font-size: 14px;
+}
+
+nav .logo img {
+  width: 50px;
 }
 
 nav button {
@@ -47,6 +52,10 @@ nav a.active {
 }
 
 @media screen and (max-width: 400px) {
+  nav .logo img {
+    width: 35px;
+  }
+
   .menu-btn {
     display: flex;
   }
@@ -75,7 +84,5 @@ nav a.active {
   nav {
     height: 50px;
     padding: 0;
-    justify-content: space-between;
-    flex-direction: column;
   }
 }
