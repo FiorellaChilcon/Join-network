@@ -45,11 +45,6 @@
   margin-bottom: 10px;
 }
 
-.sign-form input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .sign-container a {
   font-size: 14px;
   text-decoration: none;

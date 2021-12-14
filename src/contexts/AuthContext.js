@@ -1,4 +1,5 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useMemo } from 'react'
+import { collection, addDoc, getDocs } from "firebase/firestore";
 import { 
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -8,7 +9,7 @@ import {
   updatePassword,
   signOut
 } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { auth, db } from '../config/firebase';
 
 const AuthContext = React.createContext();
 
@@ -48,6 +49,28 @@ export default function AuthProvider({ children }) {
     return updatePassword(currentUser, password);
   }
 
+  function addPost(content, privacy, photo) {
+    return addDoc(collection(db, 'posts'), {
+      userId: currentUser.uid, content, photo, privacy, likes: 0
+    });
+  }
+
+  function getPosts() {
+    return getDocs(collection(db, 'posts'));
+  }
+
+  const userName = useMemo(() => {
+    if (currentUser) {
+      const { email, displayName } = currentUser;
+      const char = displayName ? ' ' : '@';
+      const field = displayName ? displayName : email;
+  
+      return field.split(char)[0];
+    }
+
+    return '';
+  }, [currentUser]);
+
   useEffect(() => {
     const unsusbscribe = auth.onAuthStateChanged(user => {
       setCurrentUser(user);
@@ -64,7 +87,10 @@ export default function AuthProvider({ children }) {
     updateAccount,
     updateUserEmail,
     updateUserPassword,
-    resetPassword
+    resetPassword,
+    addPost,
+    getPosts,
+    userName
   };
 
   return (

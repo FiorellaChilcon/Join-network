@@ -4,6 +4,7 @@
 @import './Home.css';
 @import './ForgotPassword.css';
 @import './EditAccount.css';
+@import './CreatePost.css';
 
 /* commons */
 @import './Navbar.css';
