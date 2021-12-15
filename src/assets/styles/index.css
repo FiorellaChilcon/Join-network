@@ -6,6 +6,9 @@
 @import './EditAccount.css';
 @import './CreatePost.css';
 
+/* components */
+@import './Post.css';
+
 /* commons */
 @import './Navbar.css';
 @import './FlashMessage.css';
