@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react'
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, onSnapshot } from "firebase/firestore";
 import { 
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -55,8 +55,8 @@ export default function AuthProvider({ children }) {
     });
   }
 
-  function getPosts() {
-    return getDocs(collection(db, 'posts'));
+  function getPosts(callback) {
+    return onSnapshot(collection(db, 'posts'), callback);
   }
 
   const userName = useMemo(() => {

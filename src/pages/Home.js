@@ -8,10 +8,10 @@ export default function Home() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    getPosts().then((resp) => {
-      setPosts(resp.docs);
+    const unsubscribe = getPosts((querySnapshot) => {
+      setPosts(querySnapshot.docs);
     });
-    return () => { setPosts([]); };
+    return () => { unsubscribe() };
   }, [])
 
   return (
@@ -25,12 +25,23 @@ export default function Home() {
       <div>
         {posts.map((post) => {
           return (
-            <div>
-              photo: {post.data().photo} <br/>
-              likes: {post.data().likes} <br/>
-              content: {post.data().content} <br/>
-              privacy: {post.data().privacy} <br/>
-              userId: {post.data().userId} <br/> <br/> <br/>
+            <div key={post.id} className='post'>
+              <div className='header'>
+                <img src={currentUser.photoURL || userAvatar} alt='user'/>
+                <div>
+                  <span>User name</span>
+                  <div>
+                    <span>6h</span>
+                    <img src='' />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <span>{post.data().content}</span>
+              </div>
+              <div>
+                <div><img src='' /> {post.data().likes}</div>
+              </div>
             </div>
           )
         })}
