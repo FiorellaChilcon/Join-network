@@ -44,9 +44,9 @@ export default function CreatePost() {
 
   return (
     <div className='create-post-container'>
-      <div className='create-post-head-wrapper post-redirect'>
+      <div className='create-post-head-wrapper'>
         <div className='user-pic-container'>
-          <img src={currentUser.photoURL || userAvatar} alt='user'/>
+          <img className='fit-img' src={currentUser.photoURL || userAvatar} alt='user'/>
         </div>
         <div className='create-header'>
           <span>{userName}</span>

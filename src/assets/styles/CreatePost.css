@@ -8,10 +8,12 @@
 }
 
 .create-post-head-wrapper {
-  height: 60px;
+  display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: flex-start;
   width: 100%;
-  justify-content: flex-start
+  box-sizing: border-box;
 }
 
 .create-header {
@@ -20,7 +22,7 @@
   margin-left: 10px;
 }
 
-.create-header span {
+.create-header > span {
   font-weight: bold;
   margin-bottom: 5px;
 }
@@ -39,6 +41,7 @@
   box-sizing: border-box;
   resize: none;
   border: none;
+  padding: 10px;
 }
 
 .create-post-container textarea::placeholder {
@@ -51,4 +54,10 @@
   border: none;
   padding: 10px;
   border-radius: 5px;
+}
+
+@media screen and (max-width: 440px) {
+  .create-post-container {
+    width: 100%
+  }
 }
