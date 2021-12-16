@@ -6,12 +6,14 @@ import publicIcon from '../../assets/images/public.svg';
 import heartEmptyIcon from '../../assets/images/heart-empty.svg';
 import heartFilledIcon from '../../assets/images/heart-filled.svg';
 import commentIcon from '../../assets/images/comment.svg';
+import Comments from './Comments';
 
 export default function EditProfile(props) {
   const { doc } = props;
   const post = doc.data();
   const { currentUser, getUserDoc, togglePostLike } = useAuth();
   const [userPost, setUserPost] = useState({});
+  const [showComments, setShowComments] = useState(false);
 
   const userLikesPost = useMemo(() => {
     return post.likes.includes(currentUser.uid);
@@ -48,6 +50,10 @@ export default function EditProfile(props) {
     togglePostLike(doc.id, !userLikesPost);
   }
 
+  const handleToggleComments = () => {
+    setShowComments((prev) => !prev);
+  }
+
   return (
     <div className='post'>
       <div className='create-post-head-wrapper'>
@@ -66,7 +72,7 @@ export default function EditProfile(props) {
         <span>{post.content}</span>
       </div>
       <div className='interact'>
-        <div>
+        <div className='pointer'>
           <img
             onClick={handleToggleLike}
             src={userLikesPost ? heartFilledIcon : heartEmptyIcon}
@@ -74,11 +80,12 @@ export default function EditProfile(props) {
           />
           <span className='post-counter'>{post.likes.length}</span>
         </div>
-        <div>
+        <div onClick={handleToggleComments} className='pointer'>
           <img src={commentIcon} alt='comment' />
           <span className='post-counter'>0</span>
         </div>
       </div>
+      {showComments && <Comments/>}
     </div>
   )
 }
