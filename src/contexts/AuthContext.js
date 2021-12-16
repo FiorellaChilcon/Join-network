@@ -89,6 +89,11 @@ export default function AuthProvider({ children }) {
     return onSnapshot(q, callback);
   }
 
+  function getPostComments(postId, callback) {
+    const q = query(collection(db, 'comments'), where('postId', '==', postId), orderBy('createdAt', 'desc'));
+    return onSnapshot(q, callback);
+  }
+
   function getUserDoc(userId) {
     return getDoc(doc(db, 'users', userId));
   }
@@ -136,6 +141,7 @@ export default function AuthProvider({ children }) {
     signUpWithGoogle,
     togglePostLike,
     addComment,
+    getPostComments,
     userName
   };
 

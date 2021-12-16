@@ -1,10 +1,39 @@
 .comments-container {
   padding: 16px;
+  font-size: 15px;
 }
 
-.comments-container form {
+.comments-container form, .comment {
   display: flex;
   flex-direction: row;
+}
+
+.comment {
+  margin-top: 16px;
+}
+
+.comment .content {
+  margin-left: 10px;
+  padding: 10px;
+  background-color: #f0f2f5;
+  border-radius: 5px;
+  width: calc(100% - 42px);
+  padding: 5px 10px;
+}
+
+.comment .text {
+  margin-top: 5px;
+}
+
+.comment .content .name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.comment .content span {
+  color: #65676B;
+  font-size: 12px;
+  font-weight: normal;
 }
 
 .comments-container form input[type="text"] {
@@ -17,7 +46,7 @@
   padding: 0 10px;
 }
 
-.comments-container .pic-container {
+.comment-pic-container {
   width: 32px;
   height: 32px;
   border-radius: 50%;
