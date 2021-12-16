@@ -85,7 +85,7 @@ export default function EditProfile(props) {
           <span className='post-counter'>0</span>
         </div>
       </div>
-      {showComments && <Comments/>}
+      {showComments && <Comments post={doc} />}
     </div>
   )
 }
