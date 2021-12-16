@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useMemo } from 'react'
 import {
   collection, addDoc, onSnapshot, updateDoc,
   doc, setDoc, getDoc, query, where, orderBy,
-  arrayUnion, arrayRemove
+  arrayUnion, arrayRemove, deleteDoc
 } from 'firebase/firestore';
 import { 
   createUserWithEmailAndPassword,
@@ -104,6 +104,10 @@ export default function AuthProvider({ children }) {
     });
   }
 
+  function removeDoc(collection, docId) {
+    return deleteDoc(doc(db, collection, docId));
+  }
+
   const userName = useMemo(() => {
     if (currentUser) {
       const { email, displayName } = currentUser;
@@ -142,6 +146,7 @@ export default function AuthProvider({ children }) {
     togglePostLike,
     addComment,
     getPostComments,
+    removeDoc,
     userName
   };
 

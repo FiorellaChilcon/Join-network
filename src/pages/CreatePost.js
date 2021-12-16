@@ -28,7 +28,7 @@ export default function CreatePost() {
     setIsLoading(true);
     try {
       await addPost(content, privacy, '');
-      setReqMessage({ message: 'Your post was published successful', date: Date.now(), type: 'success' });
+      setReqMessage({ message: 'Your post was published successfully', date: Date.now(), type: 'success' });
       return navigate('/');
     } catch (error) {
       setReqMessage({ message: error.message, date: Date.now(), type: 'error' });
@@ -39,7 +39,6 @@ export default function CreatePost() {
   const removeMessage = () => {
     setReqMessage(null);
   }
-
 
   return (
     <div className='create-post-container'>

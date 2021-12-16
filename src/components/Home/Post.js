@@ -5,17 +5,22 @@ import privateIcon from '../../assets/images/private.svg';
 import publicIcon from '../../assets/images/public.svg';
 import heartEmptyIcon from '../../assets/images/heart-empty.svg';
 import heartFilledIcon from '../../assets/images/heart-filled.svg';
+import menu from '../../assets/images/menu-dots.svg';
 import commentIcon from '../../assets/images/comment.svg';
 import CommentsContainer from './CommentsContainer';
 import ReactTimeAgo from 'react-time-ago';
+import FlashMessage from '../../common/FlashMessage';
 
 export default function EditProfile(props) {
   const { doc } = props;
   const post = doc.data();
-  const { currentUser, getUserDoc, togglePostLike, getPostComments } = useAuth();
+  const { currentUser, getUserDoc, togglePostLike, getPostComments, removeDoc } = useAuth();
   const [userPost, setUserPost] = useState({});
   const [showComments, setShowComments] = useState(false);
   const [comments, setPostComments] = useState([]);
+  const [showMenu, setShowMenu] = useState(false);
+  const [reqMessage, setReqMessage] = useState('');
+  const myPost = post.userId === currentUser.uid;
 
   const userLikesPost = useMemo(() => {
     return post.likes.includes(currentUser.uid);
@@ -27,14 +32,14 @@ export default function EditProfile(props) {
       setUserPost(resp.data())
     }
 
-    if (post.userId === currentUser.uid) {
+    if (myPost) {
       setUserPost(currentUser)
     } else {
       fetchUser();
     }
 
     return () => {};
-  }, [post, currentUser, getUserDoc]);
+  }, [post, currentUser, getUserDoc, myPost]);
 
   useEffect(() => {
     const unsubscribe = getPostComments(doc.id, (querySnapshot) => {
@@ -60,6 +65,23 @@ export default function EditProfile(props) {
     setShowComments((prev) => !prev);
   }
 
+  const handleShowMenu = () => {
+    setShowMenu((prev) => !prev);
+  }
+
+  const handleDeletePost = async () => {
+    try {
+      await removeDoc('posts', doc.id);
+      setReqMessage({ message: 'Your post was deleted successfully', date: Date.now(), type: 'success' });
+    } catch(error) {
+      setReqMessage({ message: error.message, date: Date.now(), type: 'error' });
+    }
+  }
+
+  const removeMessage = () => {
+    setReqMessage(null);
+  }
+
   return (
     <div className='post'>
       <div className='create-post-head-wrapper'>
@@ -75,6 +97,21 @@ export default function EditProfile(props) {
             <img className='privacy-img' src={privacyIcon} alt='privacy'/>
           </div>
         </div>
+        {myPost &&
+          <div className='menu-container pointer'>
+            <img
+              onClick={handleShowMenu}
+              className='dot-menu'
+              src={menu}
+              alt='post menu'
+            />
+            {showMenu &&
+              <div className='menu'>
+                <div>Edit</div>
+                <div role='button' onClick={handleDeletePost}>Delete</div>
+              </div>}
+          </div>
+        }
       </div>
       <div className='content'>
         <span>{post.content}</span>
@@ -94,6 +131,12 @@ export default function EditProfile(props) {
         </div>
       </div>
       {showComments && <CommentsContainer post={doc} comments={comments} />}
+      { reqMessage && 
+        <FlashMessage
+          flashMessage={reqMessage}
+          removeFlashMessage={removeMessage}
+        />
+      }
     </div>
   )
 }

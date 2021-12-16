@@ -71,3 +71,39 @@ body {
 span.post-counter {
   min-width: 15px;
 }
+
+/* post mini menu */
+.menu-container {
+  position: relative;
+  margin-left: auto;
+  align-self: flex-start;
+  margin-top: 2px;
+  font-size: 15px;
+}
+
+.menu-container .menu {
+  position: absolute;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0px 0px 28px -10px #B2B2B2;
+  width: 80px;
+  right: 0;
+}
+
+.menu-container .menu div:first-child {
+  padding: 10px 10px 5px;
+}
+
+.menu-container .menu div:last-child {
+  padding: 5px 10px 10px;
+}
+
+.menu-container .menu div:hover {
+  font-weight: 500;
+  background-color: #f3f0f0;
+}
+
+.dot-menu {
+  width: 15px;
+}
+/* post mini menu */
