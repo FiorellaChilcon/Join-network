@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import userAvatar from '../assets/images/user-avatar.png';
+import userAvatar from '../assets/images/user-avatar.svg';
 import { NavLink } from 'react-router-dom';
 import Post from '../components/Home/Post';
 
@@ -12,7 +12,7 @@ export default function Home() {
     const unsubscribe = getPosts((querySnapshot) => {
       setPosts(querySnapshot.docs);
     });
-    return () => { unsubscribe() };
+    return unsubscribe;
   }, []) // eslint-disable-line
 
   return (

@@ -11,7 +11,7 @@ export default function SignUp() {
   const [isDisabled, setIsDisabled] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { signUp } = useAuth();
+  const { signUp, saveUser } = useAuth();
 
   useEffect(() => {
     const disable = !formValues.email || !formValues.password || isLoading;
@@ -24,7 +24,8 @@ export default function SignUp() {
     if (formValues.email && formValues.password) {
       setIsLoading(true)
       try {
-        await signUp(formValues.email, formValues.password);
+        const newUser = await signUp(formValues.email, formValues.password);
+        await saveUser(formValues.email, newUser.user.uid);
         setIsLoading(false)
         return navigate('/');
       } catch(error) {

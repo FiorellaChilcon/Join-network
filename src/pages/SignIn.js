@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useForm } from '../customHooks/useForm';
 import { NavLink } from 'react-router-dom';
 
-export default function SignUp() {
+export default function SignIn() {
   const navigate = useNavigate()
   const [formValues, setFormValues] = useForm({ email: '', password: '' });
   const [isDisabled, setIsDisabled] = useState(true);

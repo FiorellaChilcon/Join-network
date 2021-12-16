@@ -1,6 +1,6 @@
 import React from 'react';
 // import { useAuth } from '../../contexts/AuthContext';
-import userAvatar from '../../assets/images/user-avatar.png';
+import userAvatar from '../../assets/images/user-avatar.svg';
 // import privateIcon from '../../assets/images/private.svg';
 import publicIcon from '../../assets/images/public.svg';
 import heartEmptyIcon from '../../assets/images/heart-empty.svg';
@@ -28,7 +28,7 @@ export default function EditProfile(props) {
         <span>{doc.data().content}</span>
       </div>
       <div className='interact'>
-        <div><img src={heartEmptyIcon} alt='like' /> {doc.data().likes}</div>
+        <div><img src={heartEmptyIcon} alt='like' /> {doc.data().likes.length}</div>
         <div><img src={commentIcon} alt='comment' /> 0</div>
       </div>
     </div>

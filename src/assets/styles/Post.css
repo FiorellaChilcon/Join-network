@@ -3,7 +3,7 @@ body {
 }
 
 .post {
-  width: 400px;
+  width: 500px;
   background-color: white;
   margin-bottom: 20px;
   border-radius: 10px;
@@ -62,7 +62,7 @@ body {
   margin-right: 5px;
 }
 
-@media screen and (max-width: 440px) {
+@media screen and (max-width: 540px) {
   .post {
     width: 100%;
   }

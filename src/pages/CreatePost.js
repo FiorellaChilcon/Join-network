@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import userAvatar from '../assets/images/user-avatar.png';
+import userAvatar from '../assets/images/user-avatar.svg';
 import FlashMessage from '../common/FlashMessage';
 
 export default function CreatePost() {
@@ -44,35 +44,37 @@ export default function CreatePost() {
 
   return (
     <div className='create-post-container'>
-      <div className='create-post-head-wrapper'>
-        <div className='user-pic-container'>
-          <img className='fit-img' src={currentUser.photoURL || userAvatar} alt='user'/>
+      <div className='create-post'>
+        <div className='create-post-head-wrapper'>
+          <div className='user-pic-container'>
+            <img className='fit-img' src={currentUser.photoURL || userAvatar} alt='user'/>
+          </div>
+          <div className='create-header'>
+            <span>{userName}</span>
+            <select onChange={handlePrivacyChange}>
+              <option value='public'>public</option>
+              <option value='private'>private</option>
+            </select>
+          </div>
         </div>
-        <div className='create-header'>
-          <span>{userName}</span>
-          <select onChange={handlePrivacyChange}>
-            <option value='public'>public</option>
-            <option value='private'>private</option>
-          </select>
-        </div>
+        <textarea
+          onChange={handleContentChange}
+          placeholder={`Whats on your mind?, ${userName}`}
+        >
+        </textarea>
+        <button
+          onClick={handleSubmit}
+          disabled={isDisabled}
+        >
+          {isLoading ? 'Loading...' : 'Post'}
+        </button>
+        { reqMessage && 
+          <FlashMessage
+            flashMessage={reqMessage}
+            removeFlashMessage={removeMessage}
+          />
+        }
       </div>
-      <textarea
-        onChange={handleContentChange}
-        placeholder={`Whats on your mind?, ${userName}`}
-      >
-      </textarea>
-      <button
-        onClick={handleSubmit}
-        disabled={isDisabled}
-      >
-        {isLoading ? 'Loading...' : 'Post'}
-      </button>
-      { reqMessage && 
-        <FlashMessage
-          flashMessage={reqMessage}
-          removeFlashMessage={removeMessage}
-        />
-      }
     </div>
   )
 }

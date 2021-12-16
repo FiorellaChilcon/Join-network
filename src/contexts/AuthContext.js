@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react'
-import { collection, addDoc, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, updateDoc, doc, setDoc } from "firebase/firestore";
 import { 
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -25,6 +25,12 @@ export default function AuthProvider({ children }) {
     return createUserWithEmailAndPassword(auth, email, password);
   }
 
+  function saveUser(email, userId) {
+    return setDoc(doc(db, 'users', userId), {
+      userId, email, photoURL: '', cover: '', displayName: '', bio: ''
+    });
+  }
+
   function logIn(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
   }
@@ -37,12 +43,16 @@ export default function AuthProvider({ children }) {
     return sendPasswordResetEmail(auth, email);
   }
 
-  function updateAccount(name) {
-    return updateProfile(currentUser, { displayName: name });
+  function updateAccount(displayName) {
+    return updateProfile(currentUser, { displayName });
   }
 
   function updateUserEmail(email) {
     return updateEmail(currentUser, email);
+  }
+
+  function updateUser(changes) {
+    return updateDoc(doc(db, 'users', currentUser.uid), changes);
   }
 
   function updateUserPassword(password) {
@@ -51,7 +61,7 @@ export default function AuthProvider({ children }) {
 
   function addPost(content, privacy, photo) {
     return addDoc(collection(db, 'posts'), {
-      userId: currentUser.uid, content, photo, privacy, likes: 0
+      userId: currentUser.uid, content, photo, privacy, likes: []
     });
   }
 
@@ -82,11 +92,13 @@ export default function AuthProvider({ children }) {
   const value = {
     currentUser,
     signUp,
+    saveUser,
     logIn,
     logOut,
     updateAccount,
     updateUserEmail,
     updateUserPassword,
+    updateUser,
     resetPassword,
     addPost,
     getPosts,
