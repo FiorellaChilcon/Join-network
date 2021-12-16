@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react'
-import { collection, addDoc, onSnapshot, updateDoc, doc, setDoc } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, updateDoc,
+  doc, setDoc, getDoc, query, where, orderBy } from 'firebase/firestore';
 import { 
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -7,11 +8,14 @@ import {
   updateProfile,
   updateEmail,
   updatePassword,
+  GoogleAuthProvider,
+  signInWithPopup,
   signOut
 } from 'firebase/auth';
 import { auth, db } from '../config/firebase';
 
 const AuthContext = React.createContext();
+const googleProvider = new GoogleAuthProvider();
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -21,13 +25,14 @@ export default function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
 
+  // start auth user
   function signUp(email, password) {
     return createUserWithEmailAndPassword(auth, email, password);
   }
 
-  function saveUser(email, userId) {
+  function saveUser(email, userId, photoURL = '', displayName = '') {
     return setDoc(doc(db, 'users', userId), {
-      userId, email, photoURL: '', cover: '', displayName: '', bio: ''
+      userId, email, photoURL, cover: '', displayName, bio: ''
     });
   }
 
@@ -58,15 +63,25 @@ export default function AuthProvider({ children }) {
   function updateUserPassword(password) {
     return updatePassword(currentUser, password);
   }
+  // end auth user
 
   function addPost(content, privacy, photo) {
     return addDoc(collection(db, 'posts'), {
-      userId: currentUser.uid, content, photo, privacy, likes: []
+      userId: currentUser.uid, content, photo, privacy, likes: [], createdAt: Date.now()
     });
   }
 
   function getPosts(callback) {
-    return onSnapshot(collection(db, 'posts'), callback);
+    const q = query(collection(db, 'posts'), where('privacy', '==', 'public'), orderBy('createdAt', 'desc'));
+    return onSnapshot(q, callback);
+  }
+
+  function getUserDoc(userId) {
+    return getDoc(doc(db, 'users', userId));
+  }
+
+  function signUpWithGoogle() {
+    return signInWithPopup(auth, googleProvider);
   }
 
   const userName = useMemo(() => {
@@ -102,6 +117,8 @@ export default function AuthProvider({ children }) {
     resetPassword,
     addPost,
     getPosts,
+    getUserDoc,
+    signUpWithGoogle,
     userName
   };
 

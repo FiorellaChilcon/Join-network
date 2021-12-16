@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useForm } from '../customHooks/useForm';
 import { NavLink } from 'react-router-dom';
+import SignInWithProvider from '../components/Sign/SignInWithProvider';
 
 export default function SignIn() {
   const navigate = useNavigate()
@@ -28,10 +29,14 @@ export default function SignIn() {
         setIsLoading(false)
         return navigate('/');
       } catch(error) {
-        setErrorMessage({ message: error.message, date: Date.now(), type: 'error' });
+        addErrorMessage(error.message);
         setIsLoading(false)
       }
     }
+  }
+
+  const addErrorMessage = (message) => {
+    setErrorMessage({ message, date: Date.now(), type: 'error' });
   }
 
   const removeErrorMessage = () => {
@@ -66,6 +71,8 @@ export default function SignIn() {
           disabled={isDisabled}
         />
       </form>
+      <span className='font-small'>or</span>
+      <SignInWithProvider onAddErrorMessage={addErrorMessage}/>
       <NavLink to='/forgot-password'>Forgot your password?</NavLink>
       <div className='font-small'>
         Don't have an account? <NavLink to='/sign-up'>Sign up</NavLink>

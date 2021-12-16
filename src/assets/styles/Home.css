@@ -17,6 +17,7 @@
   height: 40px;
   border-radius: 50%;
   background-color: white;
+  overflow: hidden;
 }
 
 .post-redirect a {

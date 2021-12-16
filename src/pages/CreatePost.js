@@ -27,10 +27,9 @@ export default function CreatePost() {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const post = await addPost(content, privacy, '');
-      console.log(post);
+      await addPost(content, privacy, '');
       setReqMessage({ message: 'Your post was published successful', date: Date.now(), type: 'success' });
-      navigate('/');
+      return navigate('/');
     } catch (error) {
       setReqMessage({ message: error.message, date: Date.now(), type: 'error' });
     }
