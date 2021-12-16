@@ -74,7 +74,7 @@ export default function SignIn() {
       <span className='font-small'>or</span>
       <SignInWithProvider onAddErrorMessage={addErrorMessage}/>
       <NavLink to='/forgot-password'>Forgot your password?</NavLink>
-      <div className='font-small'>
+      <div className='font-small footer-link'>
         Don't have an account? <NavLink to='/sign-up'>Sign up</NavLink>
       </div>
       { errorMessage && 

@@ -52,7 +52,7 @@
   text-align: center;
 }
 
-.sign-container div:last-child {
+.sign-container .footer-link {
   margin: 15px 0;
   text-align: center;
 }

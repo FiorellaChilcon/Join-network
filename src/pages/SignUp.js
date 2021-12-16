@@ -74,7 +74,7 @@ export default function SignUp() {
       </form>
       <span className='font-small'>or</span>
       <SignInWithProvider onAddErrorMessage={addErrorMessage}/>
-      <div className='font-small'>
+      <div className='font-small footer-link'>
         Have an account? <NavLink to='/sign-in'>Log in</NavLink>
       </div>
       { errorMessage && 
