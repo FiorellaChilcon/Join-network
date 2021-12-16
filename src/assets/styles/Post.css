@@ -29,9 +29,10 @@ body {
 }
 
 .post .interact {
-  padding: 0px 16px 16px;
+  padding: 12px 16px;
   display: flex;
   flex-direction: row;
+  border-top: solid 1px #f1f1f1;
 }
 
 .post .interact div:last-child {
@@ -65,4 +66,8 @@ body {
   .post {
     width: 100%;
   }
+}
+
+span.post-counter {
+  min-width: 15px;
 }

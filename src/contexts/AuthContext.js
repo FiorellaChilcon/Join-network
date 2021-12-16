@@ -1,6 +1,9 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react'
-import { collection, addDoc, onSnapshot, updateDoc,
-  doc, setDoc, getDoc, query, where, orderBy } from 'firebase/firestore';
+import {
+  collection, addDoc, onSnapshot, updateDoc,
+  doc, setDoc, getDoc, query, where, orderBy,
+  arrayUnion, arrayRemove
+} from 'firebase/firestore';
 import { 
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -34,6 +37,10 @@ export default function AuthProvider({ children }) {
     return setDoc(doc(db, 'users', userId), {
       userId, email, photoURL, cover: '', displayName, bio: ''
     });
+  }
+
+  function signUpWithGoogle() {
+    return signInWithPopup(auth, googleProvider);
   }
 
   function logIn(email, password) {
@@ -80,8 +87,10 @@ export default function AuthProvider({ children }) {
     return getDoc(doc(db, 'users', userId));
   }
 
-  function signUpWithGoogle() {
-    return signInWithPopup(auth, googleProvider);
+  function togglePostLike(postId, addLike) {
+    return updateDoc(doc(db, 'posts', postId), {
+      likes: addLike ? arrayUnion(currentUser.uid) : arrayRemove(currentUser.uid)
+    });
   }
 
   const userName = useMemo(() => {
@@ -119,6 +128,7 @@ export default function AuthProvider({ children }) {
     getPosts,
     getUserDoc,
     signUpWithGoogle,
+    togglePostLike,
     userName
   };
 

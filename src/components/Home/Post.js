@@ -4,13 +4,18 @@ import userAvatar from '../../assets/images/user-avatar.svg';
 import privateIcon from '../../assets/images/private.svg';
 import publicIcon from '../../assets/images/public.svg';
 import heartEmptyIcon from '../../assets/images/heart-empty.svg';
+import heartFilledIcon from '../../assets/images/heart-filled.svg';
 import commentIcon from '../../assets/images/comment.svg';
 
 export default function EditProfile(props) {
   const { doc } = props;
   const post = doc.data();
-  const { currentUser, getUserDoc } = useAuth();
+  const { currentUser, getUserDoc, togglePostLike } = useAuth();
   const [userPost, setUserPost] = useState({});
+
+  const userLikesPost = useMemo(() => {
+    return post.likes.includes(currentUser.uid);
+  }, [post, currentUser]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -39,6 +44,10 @@ export default function EditProfile(props) {
     return post.privacy === 'private' ? privateIcon : publicIcon;
   }, [post]);
 
+  const handleToggleLike = () => {
+    togglePostLike(doc.id, !userLikesPost);
+  }
+
   return (
     <div className='post'>
       <div className='create-post-head-wrapper'>
@@ -57,8 +66,18 @@ export default function EditProfile(props) {
         <span>{post.content}</span>
       </div>
       <div className='interact'>
-        <div><img src={heartEmptyIcon} alt='like' /> {post.likes.length}</div>
-        <div><img src={commentIcon} alt='comment' /> 0</div>
+        <div>
+          <img
+            onClick={handleToggleLike}
+            src={userLikesPost ? heartFilledIcon : heartEmptyIcon}
+            alt='like'
+          />
+          <span className='post-counter'>{post.likes.length}</span>
+        </div>
+        <div>
+          <img src={commentIcon} alt='comment' />
+          <span className='post-counter'>0</span>
+        </div>
       </div>
     </div>
   )
