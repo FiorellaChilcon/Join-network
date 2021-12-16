@@ -4,6 +4,10 @@
 @import './Home.css';
 @import './ForgotPassword.css';
 @import './EditAccount.css';
+@import './CreatePost.css';
+
+/* components */
+@import './Post.css';
 
 /* commons */
 @import './Navbar.css';

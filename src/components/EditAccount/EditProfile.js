@@ -4,7 +4,7 @@ import { useForm } from '../../customHooks/useForm';
 
 export default function EditProfile(props) {
   const { onSetNewMessage } = props;
-  const { updateAccount, updateUserEmail, currentUser } = useAuth();
+  const { updateAccount, updateUserEmail, updateUser, currentUser } = useAuth();
   const initialValues = useCallback(() => {
     return  { displayName: (currentUser.displayName || ''), email: currentUser.email };
   }, [currentUser]);
@@ -32,6 +32,7 @@ export default function EditProfile(props) {
     e.preventDefault();
     setIsLoading(true)
     try {
+      await _updateUser();
       await _updateUserAccount();
       await _updateUserEmail();
       onSetNewMessage({ message: 'Your changes were saved!', date: Date.now(), type: 'success' });
@@ -40,6 +41,19 @@ export default function EditProfile(props) {
     }
     setIsLoading(false);
   }
+
+  const _updateUser = () => {
+    const changes = {};
+    if (_fieldHasChanges('displayName')) {
+      changes.displayName = formValues.displayName.trim();
+    }
+
+    if (_fieldHasChanges('email')) {
+      changes.displayName = formValues.email.trim();
+    }
+
+    return updateUser(changes);
+  };
 
   const _updateUserAccount = () => {
     if (_fieldHasChanges('displayName')) {

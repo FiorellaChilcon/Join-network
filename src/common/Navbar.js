@@ -37,6 +37,14 @@ export default function Navbar() {
 
   return (
     <nav>
+      <div className="logo">
+        {currentUser ?
+          <NavLink to='/' onClick={handleClick}>
+            <img src='logo192.png' alt='go  home'/>
+          </NavLink>
+          : <div><img src='logo192.png' alt='app logo'/></div>
+        }
+      </div>
       <div
         role='button'
         className='menu-btn'
