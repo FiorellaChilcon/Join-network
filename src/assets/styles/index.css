@@ -8,6 +8,7 @@
 
 /* components */
 @import './Post.css';
+@import './Comments.css';
 
 /* commons */
 @import './Navbar.css';

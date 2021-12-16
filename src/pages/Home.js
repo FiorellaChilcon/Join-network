@@ -13,7 +13,7 @@ export default function Home() {
       setPosts(querySnapshot.docs);
     });
     return unsubscribe;
-  }, []) // eslint-disable-line
+  }, [getPosts]);
 
   return (
     <div className='home-container'>

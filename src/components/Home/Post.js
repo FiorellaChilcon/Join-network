@@ -6,12 +6,16 @@ import publicIcon from '../../assets/images/public.svg';
 import heartEmptyIcon from '../../assets/images/heart-empty.svg';
 import heartFilledIcon from '../../assets/images/heart-filled.svg';
 import commentIcon from '../../assets/images/comment.svg';
+import CommentsContainer from './CommentsContainer';
+import ReactTimeAgo from 'react-time-ago';
 
 export default function EditProfile(props) {
   const { doc } = props;
   const post = doc.data();
-  const { currentUser, getUserDoc, togglePostLike } = useAuth();
+  const { currentUser, getUserDoc, togglePostLike, getPostComments } = useAuth();
   const [userPost, setUserPost] = useState({});
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setPostComments] = useState([]);
 
   const userLikesPost = useMemo(() => {
     return post.likes.includes(currentUser.uid);
@@ -32,12 +36,16 @@ export default function EditProfile(props) {
     return () => {};
   }, [post, currentUser, getUserDoc]);
 
+  useEffect(() => {
+    const unsubscribe = getPostComments(doc.id, (querySnapshot) => {
+      setPostComments(querySnapshot.docs);
+    });
+    return unsubscribe;
+  }, [doc, getPostComments]);
+
   const userName = useMemo(() => {
     const { email, displayName } = userPost;
-    const char = displayName ? ' ' : '@';
-    const field = displayName ? displayName : email;
-
-    return field?.split(char)[0];
+    return displayName ? displayName : email?.split('@')[0];
   }, [userPost]);
 
   const privacyIcon = useMemo(() => {
@@ -46,6 +54,10 @@ export default function EditProfile(props) {
 
   const handleToggleLike = () => {
     togglePostLike(doc.id, !userLikesPost);
+  }
+
+  const handleToggleComments = () => {
+    setShowComments((prev) => !prev);
   }
 
   return (
@@ -57,7 +69,9 @@ export default function EditProfile(props) {
         <div className='create-header'>
           <span>{userName}</span>
           <div className='left-bottom-header'>
-            <span className='font-grey'>6h · </span>
+            <span className='font-grey'>
+              <ReactTimeAgo date={post.createdAt} timeStyle='twitter' locale="en-US"/> · 
+            </span>
             <img className='privacy-img' src={privacyIcon} alt='privacy'/>
           </div>
         </div>
@@ -66,7 +80,7 @@ export default function EditProfile(props) {
         <span>{post.content}</span>
       </div>
       <div className='interact'>
-        <div>
+        <div className='pointer'>
           <img
             onClick={handleToggleLike}
             src={userLikesPost ? heartFilledIcon : heartEmptyIcon}
@@ -74,11 +88,12 @@ export default function EditProfile(props) {
           />
           <span className='post-counter'>{post.likes.length}</span>
         </div>
-        <div>
+        <div onClick={handleToggleComments} className='pointer'>
           <img src={commentIcon} alt='comment' />
-          <span className='post-counter'>0</span>
+          <span className='post-counter'>{comments.length}</span>
         </div>
       </div>
+      {showComments && <CommentsContainer post={doc} comments={comments} />}
     </div>
   )
 }

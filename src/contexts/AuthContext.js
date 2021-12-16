@@ -78,8 +78,19 @@ export default function AuthProvider({ children }) {
     });
   }
 
+  function addComment(postId, content) {
+    return addDoc(collection(db, 'comments'), {
+      userId: currentUser.uid, postId, content, createdAt: Date.now()
+    });
+  }
+
   function getPosts(callback) {
     const q = query(collection(db, 'posts'), where('privacy', '==', 'public'), orderBy('createdAt', 'desc'));
+    return onSnapshot(q, callback);
+  }
+
+  function getPostComments(postId, callback) {
+    const q = query(collection(db, 'comments'), where('postId', '==', postId), orderBy('createdAt', 'desc'));
     return onSnapshot(q, callback);
   }
 
@@ -129,6 +140,8 @@ export default function AuthProvider({ children }) {
     getUserDoc,
     signUpWithGoogle,
     togglePostLike,
+    addComment,
+    getPostComments,
     userName
   };
 
