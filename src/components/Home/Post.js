@@ -9,17 +9,15 @@ import menu from '../../assets/images/menu-dots.svg';
 import commentIcon from '../../assets/images/comment.svg';
 import CommentsContainer from './CommentsContainer';
 import ReactTimeAgo from 'react-time-ago';
-import FlashMessage from '../../common/FlashMessage';
 
 export default function EditProfile(props) {
   const { doc } = props;
   const post = doc.data();
-  const { currentUser, getUserDoc, togglePostLike, getPostComments, removeDoc } = useAuth();
+  const { currentUser, getUserDoc, togglePostLike, getPostComments, removeDoc, addToastMessage } = useAuth();
   const [userPost, setUserPost] = useState({});
   const [showComments, setShowComments] = useState(false);
   const [comments, setPostComments] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
-  const [reqMessage, setReqMessage] = useState('');
   const myPost = post.userId === currentUser.uid;
 
   const userLikesPost = useMemo(() => {
@@ -72,14 +70,10 @@ export default function EditProfile(props) {
   const handleDeletePost = async () => {
     try {
       await removeDoc('posts', doc.id);
-      setReqMessage({ message: 'Your post was deleted successfully', date: Date.now(), type: 'success' });
+      addToastMessage('Your post was deleted successfully', 'success');
     } catch(error) {
-      setReqMessage({ message: error.message, date: Date.now(), type: 'error' });
+      addToastMessage(error.message, 'error');
     }
-  }
-
-  const removeMessage = () => {
-    setReqMessage(null);
   }
 
   return (
@@ -131,12 +125,6 @@ export default function EditProfile(props) {
         </div>
       </div>
       {showComments && <CommentsContainer post={doc} comments={comments} />}
-      { reqMessage && 
-        <FlashMessage
-          flashMessage={reqMessage}
-          removeFlashMessage={removeMessage}
-        />
-      }
     </div>
   )
 }

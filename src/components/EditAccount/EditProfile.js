@@ -3,8 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useForm } from '../../customHooks/useForm';
 
 export default function EditProfile(props) {
-  const { onSetNewMessage } = props;
-  const { updateAccount, updateUserEmail, updateUser, currentUser } = useAuth();
+  const { updateAccount, updateUserEmail, updateUser, currentUser, addToastMessage } = useAuth();
   const initialValues = useCallback(() => {
     return  { displayName: (currentUser.displayName || ''), email: currentUser.email };
   }, [currentUser]);
@@ -35,9 +34,9 @@ export default function EditProfile(props) {
       await _updateUser();
       await _updateUserAccount();
       await _updateUserEmail();
-      onSetNewMessage({ message: 'Your changes were saved!', date: Date.now(), type: 'success' });
+      addToastMessage('Your changes were saved!', 'success');
     } catch(error) {
-      onSetNewMessage({ message: error.message, date: Date.now(), type: 'error' });
+      addToastMessage(error.message, 'error');
     }
     setIsLoading(false);
   }

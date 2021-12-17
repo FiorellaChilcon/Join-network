@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useForm } from '../../customHooks/useForm';
 
-export default function EditPassword(props) {
-  const { onSetNewMessage } = props;
-  const { updateUserPassword } = useAuth();
+export default function EditPassword() {
+  const { updateUserPassword, addToastMessage } = useAuth();
   const [formValues, setFormValues] = useForm({ password: '', confirmPassword: '' });
   const [isDisabled, setIsDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -21,9 +20,9 @@ export default function EditPassword(props) {
     setIsLoading(true)
     try {
       await updateUserPassword(formValues.password);
-      onSetNewMessage({ message: 'Your changes were saved!', date: Date.now(), type: 'success' });
+      addToastMessage('Your changes were saved!', 'success');
     } catch(error) {
-      onSetNewMessage({ message: error.message, date: Date.now(), type: 'error' });
+      addToastMessage(error.message, 'error');
     }
     setIsLoading(false);
   }

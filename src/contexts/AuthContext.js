@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react'
+import FlashMessage from '../common/FlashMessage';
 import {
   collection, addDoc, onSnapshot, updateDoc,
   doc, setDoc, getDoc, query, where, orderBy,
@@ -27,6 +28,7 @@ export function useAuth() {
 export default function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
+  const [toastMessage, setToastMessage] = useState(null);
 
   // start auth user
   function signUp(email, password) {
@@ -120,6 +122,15 @@ export default function AuthProvider({ children }) {
     return '';
   }, [currentUser]);
 
+  // start toast messages
+  const removeToastMessage = () => {
+    setToastMessage(null);
+  }
+  const addToastMessage = (message, type) => {
+    setToastMessage({ message, type, date: Date.now() });
+  }
+  // end toast messages
+
   useEffect(() => {
     const unsusbscribe = auth.onAuthStateChanged(user => {
       setCurrentUser(user);
@@ -147,12 +158,19 @@ export default function AuthProvider({ children }) {
     addComment,
     getPostComments,
     removeDoc,
+    addToastMessage,
     userName
   };
 
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}
+      { toastMessage && 
+        <FlashMessage
+          flashMessage={toastMessage}
+          removeFlashMessage={removeToastMessage}
+        />
+      }
     </AuthContext.Provider>
   )
 }

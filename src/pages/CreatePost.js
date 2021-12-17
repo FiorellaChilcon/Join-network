@@ -2,15 +2,13 @@ import React, { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import userAvatar from '../assets/images/user-avatar.svg';
-import FlashMessage from '../common/FlashMessage';
 
 export default function CreatePost() {
   const navigate = useNavigate()
-  const { currentUser, userName, addPost } = useAuth();
+  const { currentUser, userName, addPost, addToastMessage } = useAuth();
   const [content, setContent]= useState('');
   const [privacy, setPrivacy]= useState('public');
   const [isLoading, setIsLoading]= useState('');
-  const [reqMessage, setReqMessage] = useState(null);
 
   const isDisabled = useMemo(() => {
     return !content.trim() || isLoading;
@@ -28,16 +26,12 @@ export default function CreatePost() {
     setIsLoading(true);
     try {
       await addPost(content, privacy, '');
-      setReqMessage({ message: 'Your post was published successfully', date: Date.now(), type: 'success' });
+      addToastMessage('Your post was published successfully', 'success');
       return navigate('/');
     } catch (error) {
-      setReqMessage({ message: error.message, date: Date.now(), type: 'error' });
+      addToastMessage(error.message, 'error');
     }
     setIsLoading(false);
-  }
-
-  const removeMessage = () => {
-    setReqMessage(null);
   }
 
   return (
@@ -66,12 +60,6 @@ export default function CreatePost() {
         >
           {isLoading ? 'Loading...' : 'Post'}
         </button>
-        { reqMessage && 
-          <FlashMessage
-            flashMessage={reqMessage}
-            removeFlashMessage={removeMessage}
-          />
-        }
       </div>
     </div>
   )

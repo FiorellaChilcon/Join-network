@@ -3,10 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import googleIcon from '../../assets/images/google.png'
 
-export default function SignInWithProvider(props) {
+export default function SignInWithProvider() {
   const navigate = useNavigate();
-  const { onAddErrorMessage } = props;
-  const { signUpWithGoogle, getUserDoc, saveUser } = useAuth();
+  const { signUpWithGoogle, getUserDoc, saveUser, addToastMessage } = useAuth();
 
   const signWithGoogle = async () => {
     try {
@@ -19,7 +18,7 @@ export default function SignInWithProvider(props) {
       return navigate('/');
 
     } catch (error) {
-      onAddErrorMessage(error.message);
+      addToastMessage(error.message, 'error');
     }
   }
 

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import FlashMessage from '../common/FlashMessage';
 import { useForm } from '../customHooks/useForm';
 import { useAuth } from '../contexts/AuthContext';
 import { NavLink } from 'react-router-dom';
@@ -7,9 +6,8 @@ import { NavLink } from 'react-router-dom';
 export default function ForgotPassword() {
   const [formValues, setFormValues] = useForm({ email: '' });
   const [isDisabled, setIsDisabled] = useState(true);
-  const [reqMessage, setReqMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { resetPassword } = useAuth();
+  const { resetPassword, addToastMessage } = useAuth();
 
   useEffect(() => {
     const disable = !formValues.email || isLoading;
@@ -24,16 +22,12 @@ export default function ForgotPassword() {
       try {
         await resetPassword(formValues.email);
         setIsLoading(false);
-        setReqMessage({ message: "we've send you an email", date: Date.now(), type: 'success' });
+        addToastMessage("we've send you an email", 'success');
       } catch(error) {
-        setReqMessage({ message: error.message, date: Date.now(), type: 'error' });
-        setIsLoading(false)
+        addToastMessage(error.message, 'error');
+        setIsLoading(false);
       }
     }
-  }
-
-  const removeMessage = () => {
-    setReqMessage(null);
   }
 
   return (
@@ -57,12 +51,6 @@ export default function ForgotPassword() {
         />
       </form>
       <NavLink to='/sign-in'>Back to Login</NavLink>
-      { reqMessage && 
-        <FlashMessage
-          flashMessage={reqMessage}
-          removeFlashMessage={removeMessage}
-        />
-      }
     </div>
   )
 }
