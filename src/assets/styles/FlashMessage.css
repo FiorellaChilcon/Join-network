@@ -1,13 +1,22 @@
-.flash-message {
+.flash-message-container {
   position: fixed;
   top: 0;
-  right: -100%;
-  margin: 20px;
+  right: 0;
+  z-index: 1;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.flash-message {
   padding: 10px;
   color: white;
   border-radius: 5px;
-  z-index: 1;
-  animation: slide 2s 1;
+  animation: slide 0.5s 1;
+  margin: 0 20px 10px 20px;
+}
+
+.flash-message:first-child {
+  margin-top: 20px;
 }
 
 .flash-message.error {
@@ -19,6 +28,6 @@
 }
 
 @keyframes slide {
-  0%   {right: -100%}
-  50%  {right: 0}
+  0%   {transform: translate(calc(100% + 20px), 0)}
+  50%  {transform: translate(0, 0)}
 }

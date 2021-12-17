@@ -28,7 +28,7 @@ export function useAuth() {
 export default function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
-  const [toastMessage, setToastMessage] = useState(null);
+  const [toastMessage, setToastMessage] = useState([]);
 
   // start auth user
   function signUp(email, password) {
@@ -123,11 +123,12 @@ export default function AuthProvider({ children }) {
   }, [currentUser]);
 
   // start toast messages
-  const removeToastMessage = () => {
-    setToastMessage(null);
+  const removeToastMessage = (date) => {
+    setToastMessage((prev) => prev.filter((message) => message.date !== date));
   }
+
   const addToastMessage = (message, type) => {
-    setToastMessage({ message, type, date: Date.now() });
+    setToastMessage((prev) => [...prev, { message, type, date: Date.now() }]);
   }
   // end toast messages
 
