@@ -19,3 +19,8 @@
 .pointer {
   cursor: pointer;
 }
+
+.not-allowed {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
