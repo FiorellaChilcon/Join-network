@@ -12,7 +12,7 @@ export default function EditPassword() {
     const formHasChanges = formValues.password && formValues.confirmPassword && (formValues.password === formValues.confirmPassword);
     const disable = !formHasChanges || isLoading;
     setIsDisabled(disable);
-    return () => { setIsDisabled(disable); };
+    return () => {};
   }, [formValues, isLoading]);
 
   const handleFormValuesSubmit = async (e) => {

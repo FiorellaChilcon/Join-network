@@ -86,9 +86,17 @@ export default function AuthProvider({ children }) {
     });
   }
 
+  function updatePost(postId, changes) {
+    return updateDoc(doc(db, 'posts', postId), changes);
+  }
+
   function getPosts(callback) {
     const q = query(collection(db, 'posts'), where('privacy', '==', 'public'), orderBy('createdAt', 'desc'));
     return onSnapshot(q, callback);
+  }
+
+  function getPost(postId) {
+    return getDoc(doc(db, 'posts', postId));
   }
 
   function getPostComments(postId, callback) {
@@ -160,6 +168,8 @@ export default function AuthProvider({ children }) {
     getPostComments,
     removeDoc,
     addToastMessage,
+    updatePost,
+    getPost,
     userName
   };
 

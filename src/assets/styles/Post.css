@@ -90,15 +90,19 @@ span.post-counter {
   right: 0;
 }
 
-.menu-container .menu div:first-child {
+.menu-container .menu a {
   padding: 10px 10px 5px;
+  text-decoration: none;
+  color: black;
+  display: block;
 }
 
-.menu-container .menu div:last-child {
+.menu-container .menu div {
   padding: 5px 10px 10px;
 }
 
-.menu-container .menu div:hover {
+.menu-container .menu div:hover,
+.menu-container .menu a:hover  {
   font-weight: 500;
   background-color: #f3f0f0;
 }

@@ -18,7 +18,7 @@ export default function EditProfile(props) {
     });
     const disable = !formHasChanges || isLoading;
     setIsDisabled(disable);
-    return () => { setIsDisabled(disable); };
+    return () =>  {};
   }, [formValues, isLoading, initialValues]);
 
 

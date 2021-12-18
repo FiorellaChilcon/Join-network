@@ -6,7 +6,7 @@ function Toast(props) {
     const timerId = setTimeout(() => {
       removeFlashMessage(toast.date);
     }, 5000);
-    return () => { clearTimeout(timerId) };;
+    return () => { clearTimeout(timerId) };
   }, [removeFlashMessage, toast]);
 
   return (

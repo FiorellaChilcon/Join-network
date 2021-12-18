@@ -12,7 +12,7 @@ export default function ForgotPassword() {
   useEffect(() => {
     const disable = !formValues.email || isLoading;
     setIsDisabled(disable);
-    return () => { setIsDisabled(disable); };
+    return () => {};
   }, [formValues, isLoading]);
 
   const handleSubmit = async (e) => {

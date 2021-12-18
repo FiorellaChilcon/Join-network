@@ -15,7 +15,7 @@ export default function SignIn() {
   useEffect(() => {
     const disable = !formValues.email || !formValues.password || isLoading;
     setIsDisabled(disable);
-    return () => { setIsDisabled(disable); };
+    return () => {};
   }, [formValues, isLoading]);
 
   const handleSubmit = async (e) => {

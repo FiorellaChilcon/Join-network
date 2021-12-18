@@ -9,8 +9,9 @@ import menu from '../../assets/images/menu-dots.svg';
 import commentIcon from '../../assets/images/comment.svg';
 import CommentsContainer from './CommentsContainer';
 import ReactTimeAgo from 'react-time-ago';
+import { NavLink } from 'react-router-dom';
 
-export default function EditProfile(props) {
+export default function Post(props) {
   const { doc } = props;
   const post = doc.data();
   const { currentUser, getUserDoc, togglePostLike, getPostComments, removeDoc, addToastMessage } = useAuth();
@@ -25,25 +26,32 @@ export default function EditProfile(props) {
   }, [post, currentUser]);
 
   useEffect(() => {
+    const abortController = new AbortController();
     const fetchUser = async () => {
       const resp = await getUserDoc(post.userId);
       setUserPost(resp.data())
     }
 
     if (myPost) {
-      setUserPost(currentUser)
+      setUserPost(currentUser);
     } else {
       fetchUser();
     }
 
-    return () => {};
+    return () =>  {
+      abortController.abort();
+    };
   }, [post, currentUser, getUserDoc, myPost]);
 
   useEffect(() => {
+    const abortController = new AbortController();
     const unsubscribe = getPostComments(doc.id, (querySnapshot) => {
       setPostComments(querySnapshot.docs);
     });
-    return unsubscribe;
+    return () =>  {
+      unsubscribe();
+      abortController.abort();
+    };
   }, [doc, getPostComments]);
 
   const userName = useMemo(() => {
@@ -101,7 +109,7 @@ export default function EditProfile(props) {
             />
             {showMenu &&
               <div className='menu'>
-                <div>Edit</div>
+                <NavLink to={`/post/${doc.id}/edit`}>Edit</NavLink>
                 <div role='button' onClick={handleDeletePost}>Delete</div>
               </div>}
           </div>
