@@ -1,15 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
 import menuIcon from '../assets/images/bars-solid.svg'
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import FlashMessage from '../common/FlashMessage';
 
 export default function Navbar() {
   const navbar = useRef(null);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const { logOut, currentUser } = useAuth();
+  const { logOut, currentUser, addToastMessage } = useAuth();
   const navigate = useNavigate()
   const toogleNavbar = () => {
     navbar.current.classList.toggle('flex');
@@ -27,13 +25,9 @@ export default function Navbar() {
       handleClick();
       navigate('/sign-in');
     } catch (error) {
-      setErrorMessage({ message: error.message, date: Date.now() });
+      addToastMessage(error.message, 'error');
     }
   };
-
-  const removeErrorMessage = () => {
-    setErrorMessage(null);
-  }
 
   return (
     <nav>
@@ -61,13 +55,6 @@ export default function Navbar() {
         {!currentUser && <NavLink to='/sign-in' onClick={handleClick}>Sign in</NavLink>}
         {!currentUser && <NavLink to='/sign-up' onClick={handleClick}>Sign up</NavLink>}
       </div>
-      { errorMessage && 
-        <FlashMessage
-          type='error'
-          flashMessage={errorMessage}
-          removeFlashMessage={removeErrorMessage}
-        />
-      }
     </nav>
   );
 }

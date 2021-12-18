@@ -9,10 +9,15 @@ export default function Home() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
+    const abortController = new AbortController();
     const unsubscribe = getPosts((querySnapshot) => {
       setPosts(querySnapshot.docs);
     });
-    return unsubscribe;
+
+    return () =>  {
+      unsubscribe();
+      abortController.abort();
+    };
   }, [getPosts]);
 
   return (

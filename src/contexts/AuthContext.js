@@ -1,8 +1,9 @@
 import React, { useContext, useState, useEffect, useMemo } from 'react'
+import FlashMessage from '../common/FlashMessage';
 import {
   collection, addDoc, onSnapshot, updateDoc,
   doc, setDoc, getDoc, query, where, orderBy,
-  arrayUnion, arrayRemove
+  arrayUnion, arrayRemove, deleteDoc
 } from 'firebase/firestore';
 import { 
   createUserWithEmailAndPassword,
@@ -27,6 +28,7 @@ export function useAuth() {
 export default function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
+  const [toastMessage, setToastMessage] = useState([]);
 
   // start auth user
   function signUp(email, password) {
@@ -84,9 +86,17 @@ export default function AuthProvider({ children }) {
     });
   }
 
+  function updatePost(postId, changes) {
+    return updateDoc(doc(db, 'posts', postId), changes);
+  }
+
   function getPosts(callback) {
     const q = query(collection(db, 'posts'), where('privacy', '==', 'public'), orderBy('createdAt', 'desc'));
     return onSnapshot(q, callback);
+  }
+
+  function getPost(postId) {
+    return getDoc(doc(db, 'posts', postId));
   }
 
   function getPostComments(postId, callback) {
@@ -104,6 +114,10 @@ export default function AuthProvider({ children }) {
     });
   }
 
+  function removeDoc(collection, docId) {
+    return deleteDoc(doc(db, collection, docId));
+  }
+
   const userName = useMemo(() => {
     if (currentUser) {
       const { email, displayName } = currentUser;
@@ -115,6 +129,16 @@ export default function AuthProvider({ children }) {
 
     return '';
   }, [currentUser]);
+
+  // start toast messages
+  const removeToastMessage = (date) => {
+    setToastMessage((prev) => prev.filter((message) => message.date !== date));
+  }
+
+  const addToastMessage = (message, type) => {
+    setToastMessage((prev) => [...prev, { message, type, date: Date.now() }]);
+  }
+  // end toast messages
 
   useEffect(() => {
     const unsusbscribe = auth.onAuthStateChanged(user => {
@@ -142,12 +166,22 @@ export default function AuthProvider({ children }) {
     togglePostLike,
     addComment,
     getPostComments,
+    removeDoc,
+    addToastMessage,
+    updatePost,
+    getPost,
     userName
   };
 
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}
+      { toastMessage && 
+        <FlashMessage
+          flashMessage={toastMessage}
+          removeFlashMessage={removeToastMessage}
+        />
+      }
     </AuthContext.Provider>
   )
 }

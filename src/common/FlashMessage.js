@@ -1,15 +1,27 @@
 import React, {  useEffect } from 'react';
 
-export default function FlashMessage(props) {
-  const { flashMessage, removeFlashMessage } = props;
+function Toast(props) {
+  const { removeFlashMessage, toast } = props;
   useEffect(() => {
     const timerId = setTimeout(() => {
-      removeFlashMessage();
+      removeFlashMessage(toast.date);
     }, 5000);
-    return () => { clearTimeout(timerId) };;
-  }, [flashMessage, removeFlashMessage]);
+    return () => { clearTimeout(timerId) };
+  }, [removeFlashMessage, toast]);
 
   return (
-    <div className={`flash-message ${flashMessage.type}`}>{flashMessage.message}</div>
+    <div className={`flash-message ${toast.type}`}>{toast.message}</div>
+  );
+}
+
+export default function FlashMessage(props) {
+  const { flashMessage, removeFlashMessage } = props;
+
+  return (
+    <div className='flash-message-container'>
+      {flashMessage.map((toast) =>
+        <Toast key={toast.date} toast={toast} removeFlashMessage={removeFlashMessage}/>
+      )}
+    </div>
   );
 }

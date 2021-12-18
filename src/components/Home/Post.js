@@ -5,42 +5,53 @@ import privateIcon from '../../assets/images/private.svg';
 import publicIcon from '../../assets/images/public.svg';
 import heartEmptyIcon from '../../assets/images/heart-empty.svg';
 import heartFilledIcon from '../../assets/images/heart-filled.svg';
+import menu from '../../assets/images/menu-dots.svg';
 import commentIcon from '../../assets/images/comment.svg';
 import CommentsContainer from './CommentsContainer';
 import ReactTimeAgo from 'react-time-ago';
+import { NavLink } from 'react-router-dom';
 
-export default function EditProfile(props) {
+export default function Post(props) {
   const { doc } = props;
   const post = doc.data();
-  const { currentUser, getUserDoc, togglePostLike, getPostComments } = useAuth();
+  const { currentUser, getUserDoc, togglePostLike, getPostComments, removeDoc, addToastMessage } = useAuth();
   const [userPost, setUserPost] = useState({});
   const [showComments, setShowComments] = useState(false);
   const [comments, setPostComments] = useState([]);
+  const [showMenu, setShowMenu] = useState(false);
+  const myPost = post.userId === currentUser.uid;
 
   const userLikesPost = useMemo(() => {
     return post.likes.includes(currentUser.uid);
   }, [post, currentUser]);
 
   useEffect(() => {
+    const abortController = new AbortController();
     const fetchUser = async () => {
       const resp = await getUserDoc(post.userId);
       setUserPost(resp.data())
     }
 
-    if (post.userId === currentUser.uid) {
-      setUserPost(currentUser)
+    if (myPost) {
+      setUserPost(currentUser);
     } else {
       fetchUser();
     }
 
-    return () => {};
-  }, [post, currentUser, getUserDoc]);
+    return () =>  {
+      abortController.abort();
+    };
+  }, [post, currentUser, getUserDoc, myPost]);
 
   useEffect(() => {
+    const abortController = new AbortController();
     const unsubscribe = getPostComments(doc.id, (querySnapshot) => {
       setPostComments(querySnapshot.docs);
     });
-    return unsubscribe;
+    return () =>  {
+      unsubscribe();
+      abortController.abort();
+    };
   }, [doc, getPostComments]);
 
   const userName = useMemo(() => {
@@ -60,6 +71,19 @@ export default function EditProfile(props) {
     setShowComments((prev) => !prev);
   }
 
+  const handleShowMenu = () => {
+    setShowMenu((prev) => !prev);
+  }
+
+  const handleDeletePost = async () => {
+    try {
+      await removeDoc('posts', doc.id);
+      addToastMessage('Your post was deleted successfully', 'success');
+    } catch(error) {
+      addToastMessage(error.message, 'error');
+    }
+  }
+
   return (
     <div className='post'>
       <div className='create-post-head-wrapper'>
@@ -75,6 +99,21 @@ export default function EditProfile(props) {
             <img className='privacy-img' src={privacyIcon} alt='privacy'/>
           </div>
         </div>
+        {myPost &&
+          <div className='menu-container pointer'>
+            <img
+              onClick={handleShowMenu}
+              className='dot-menu'
+              src={menu}
+              alt='post menu'
+            />
+            {showMenu &&
+              <div className='menu'>
+                <NavLink to={`/post/${doc.id}/edit`}>Edit</NavLink>
+                <div role='button' onClick={handleDeletePost}>Delete</div>
+              </div>}
+          </div>
+        }
       </div>
       <div className='content'>
         <span>{post.content}</span>

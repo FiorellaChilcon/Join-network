@@ -10,6 +10,7 @@ export default function Comment(props) {
   const { currentUser, getUserDoc } = useAuth();
 
   useEffect(() => {
+    const abortController = new AbortController();
     const fetchUser = async () => {
       const resp = await getUserDoc(data.userId);
       setUserComment(resp.data())
@@ -21,7 +22,9 @@ export default function Comment(props) {
       fetchUser();
     }
 
-    return () => {};
+    return () =>  {
+      abortController.abort();
+    };
   }, [data, currentUser, getUserDoc]);
 
   const userName = useMemo(() => {
