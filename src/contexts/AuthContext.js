@@ -3,7 +3,7 @@ import FlashMessage from '../common/FlashMessage';
 import {
   collection, addDoc, onSnapshot, updateDoc,
   doc, setDoc, getDoc, query, where, orderBy,
-  arrayUnion, arrayRemove, deleteDoc
+  arrayUnion, arrayRemove, deleteDoc, getDocs
 } from 'firebase/firestore';
 import { 
   createUserWithEmailAndPassword,
@@ -118,6 +118,14 @@ export default function AuthProvider({ children }) {
     return deleteDoc(doc(db, collection, docId));
   }
 
+  async function removeCommentsAssociated(postId) {
+    const q = query(collection(db, 'comments'), where('postId', '==', postId));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      removeDoc('comments', doc.id);
+    });
+  }
+
   const userName = useMemo(() => {
     if (currentUser) {
       const { email, displayName } = currentUser;
@@ -170,6 +178,7 @@ export default function AuthProvider({ children }) {
     addToastMessage,
     updatePost,
     getPost,
+    removeCommentsAssociated,
     userName
   };
 

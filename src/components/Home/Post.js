@@ -14,7 +14,7 @@ import { NavLink } from 'react-router-dom';
 export default function Post(props) {
   const { doc } = props;
   const post = doc.data();
-  const { currentUser, getUserDoc, togglePostLike, getPostComments, removeDoc, addToastMessage } = useAuth();
+  const { currentUser, getUserDoc, togglePostLike, getPostComments, removeDoc, addToastMessage, removeCommentsAssociated } = useAuth();
   const [userPost, setUserPost] = useState({});
   const [showComments, setShowComments] = useState(false);
   const [comments, setPostComments] = useState([]);
@@ -78,6 +78,7 @@ export default function Post(props) {
   const handleDeletePost = async () => {
     try {
       await removeDoc('posts', doc.id);
+      removeCommentsAssociated(doc.id);
       addToastMessage('Your post was deleted successfully', 'success');
     } catch(error) {
       addToastMessage(error.message, 'error');
