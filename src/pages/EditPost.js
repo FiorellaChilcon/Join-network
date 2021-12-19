@@ -7,7 +7,7 @@ import userAvatar from '../assets/images/user-avatar.svg';
 export default function EditPost() {
   const navigate = useNavigate();
   const { postId } = useParams();
-  const { currentUser, userName, addToastMessage, updatePost, getPost } = useAuth();
+  const { currentUser, userName, addToastMessage, updateADoc, getPost } = useAuth();
   const [content, setContent]= useState('');
   const [privacy, setPrivacy]= useState('public');
   const [isLoading, setIsLoading]= useState('');
@@ -42,7 +42,7 @@ export default function EditPost() {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      await updatePost(postId, {content, privacy});
+      await updateADoc('posts', postId, {content, privacy});
       addToastMessage('Your post was updated successfully', 'success');
       return navigate('/');
     } catch (error) {

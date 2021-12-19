@@ -5,17 +5,22 @@ import Comment from './Comment';
 
 export default function CommentsContainer(props) {
   const { post, comments } = props;
-  const { currentUser, addComment } = useAuth();
+  const { currentUser, addComment, addToastMessage } = useAuth();
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
     if (content.trim()) {
-      setLoading(true)
-      await addComment(post.id, content.trim())
-      setContent('');
-      setLoading(false)
+      setLoading(true);
+      try {
+        await addComment(post.id, content.trim())
+        setContent('');
+        addToastMessage('Your comment was added successfully', 'success');
+      } catch (error) {
+        addToastMessage(error.message, 'error');
+      }
+      setLoading(false);
     }
   }
 
@@ -25,7 +30,7 @@ export default function CommentsContainer(props) {
 
   return (
     <div className='comments-container'>
-      <form onSubmit={handleSubmitComment}>
+      <form className='leave-comment-form' onSubmit={handleSubmitComment}>
         <div className='comment-pic-container'>
           <img className='fit-img' src={currentUser.photoURL || userAvatar} alt='user'/>
         </div>

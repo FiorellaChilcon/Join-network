@@ -90,19 +90,19 @@ span.post-counter {
   right: 0;
 }
 
-.menu-container .menu a {
+.menu-container .menu .edit-btn {
   padding: 10px 10px 5px;
   text-decoration: none;
   color: black;
   display: block;
 }
 
-.menu-container .menu div {
+.menu-container .menu .delete-btn {
   padding: 5px 10px 10px;
 }
 
-.menu-container .menu div:hover,
-.menu-container .menu a:hover  {
+.menu-container .menu .delete-btn:hover,
+.menu-container .menu .edit-btn:hover  {
   font-weight: 500;
   background-color: #f3f0f0;
 }

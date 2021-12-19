@@ -8,8 +8,11 @@ export default function Comment(props) {
   const { comment } = props;
   const data = comment.data();
   const [userComment, setUserComment] = useState({});
+  const [commentContent, setCommentContent] = useState(data.content);
+  const [editMode, setEditMode] = useState(false);
+  const [updatedCommentIsLoading, setUpdatedCommentIsLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { currentUser, getUserDoc, removeDoc, addToastMessage } = useAuth();
+  const { currentUser, getUserDoc, removeDoc, addToastMessage, updateADoc } = useAuth();
   const [showMenu, setShowMenu] = useState(false);
   const myComment = data.userId === currentUser.uid;
 
@@ -54,6 +57,32 @@ export default function Comment(props) {
     }
   }
 
+  const handleContentChange = ({ target }) => {
+    setCommentContent(target.value);
+  }
+
+  const toggleEditMode = () => {
+    setCommentContent(data.content);
+    setEditMode((prev) => !prev);
+    setShowMenu(false);
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (commentContent.trim()) {
+      setUpdatedCommentIsLoading(true);
+      try {
+        await updateADoc('comments', comment.id, { content: commentContent });
+        addToastMessage('Your comment was deleted successfully', 'success');
+      } catch(error) {
+        addToastMessage(error.message, 'error');
+      }
+      setEditMode(false);
+      setUpdatedCommentIsLoading(false);
+    }
+  }
+
 
   return (
     <div className='comment'>
@@ -77,14 +106,25 @@ export default function Comment(props) {
               />
               {showMenu &&
                 <div className='menu'>
-                  {/* <NavLink to={`/post/${comment.id}/edit`}>Edit</NavLink> */}
-                  <div role='button' onClick={handleDeletePost}>Delete</div>
+                  <div className='edit-btn' role='button' onClick={toggleEditMode}>Edit</div>
+                  <div className='delete-btn' role='button' onClick={handleDeletePost}>Delete</div>
                 </div>}
             </div>
           }
         </div>
         <div className='text'>
-          {data.content}
+        {editMode ?
+          <form onSubmit={handleSubmit}>
+            <input
+              autoFocus
+              type='text'
+              value={updatedCommentIsLoading ? 'updating...' : commentContent}
+              onChange={handleContentChange}
+              disabled={updatedCommentIsLoading}
+            />
+          </form> :
+          data.content
+        }
         </div>
       </div>
     </div>

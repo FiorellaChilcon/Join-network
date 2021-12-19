@@ -86,8 +86,8 @@ export default function AuthProvider({ children }) {
     });
   }
 
-  function updatePost(postId, changes) {
-    return updateDoc(doc(db, 'posts', postId), changes);
+  function updateADoc(collectionName, docId, changes) {
+    return updateDoc(doc(db, collectionName, docId), changes);
   }
 
   function getPosts(callback) {
@@ -176,7 +176,7 @@ export default function AuthProvider({ children }) {
     getPostComments,
     removeDoc,
     addToastMessage,
-    updatePost,
+    updateADoc,
     getPost,
     removeCommentsAssociated,
     userName

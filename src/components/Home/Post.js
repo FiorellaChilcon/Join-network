@@ -110,8 +110,8 @@ export default function Post(props) {
             />
             {showMenu &&
               <div className='menu'>
-                <NavLink to={`/post/${doc.id}/edit`}>Edit</NavLink>
-                <div role='button' onClick={handleDeletePost}>Delete</div>
+                <NavLink className='edit-btn' to={`/post/${doc.id}/edit`}>Edit</NavLink>
+                <div className='delete-btn' role='button' onClick={handleDeletePost}>Delete</div>
               </div>}
           </div>
         }
