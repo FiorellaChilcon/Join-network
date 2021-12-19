@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
-import menuIcon from '../assets/images/bars-solid.svg'
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import userAvatar from '../assets/images/user-avatar.svg';
 
 export default function Navbar() {
   const navbar = useRef(null);
@@ -31,7 +31,7 @@ export default function Navbar() {
 
   return (
     <nav>
-      <div className="logo">
+      <div className='logo'>
         {currentUser ?
           <NavLink to='/' onClick={handleClick}>
             <img src='logo192.png' alt='go  home'/>
@@ -39,22 +39,24 @@ export default function Navbar() {
           : <div><img src='logo192.png' alt='app logo'/></div>
         }
       </div>
+      { currentUser &&
       <div
         role='button'
         className='menu-btn'
         onClick={toogleNavbar}
       >
-        <img src={menuIcon} alt='open menu' />
-      </div>
+        <img className='fit-img' src={currentUser.photoURL || userAvatar} alt='go to my profile'/>
+      </div>}
+      { currentUser &&
       <div
         className='menu-links'
         ref={navbar}
       >
-        {currentUser && <NavLink to='/' onClick={handleClick}>Home</NavLink>}
-        {currentUser && <button onClick={handleSignOut}>Sign Out</button>}
-        {!currentUser && <NavLink to='/sign-in' onClick={handleClick}>Sign in</NavLink>}
-        {!currentUser && <NavLink to='/sign-up' onClick={handleClick}>Sign up</NavLink>}
-      </div>
+        <NavLink to='/' onClick={handleClick}>Home</NavLink>
+        <NavLink to='/me' onClick={handleClick}>Profile</NavLink>
+        <NavLink to='/edit-account' onClick={handleClick}>Account</NavLink>
+        <button onClick={handleSignOut}>Sign Out</button>
+      </div>}
     </nav>
   );
 }
