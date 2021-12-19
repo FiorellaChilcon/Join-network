@@ -63,3 +63,19 @@
   background-color: white;
   overflow: hidden;
 }
+
+.comment .cancel-save-options {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.comment .cancel-save-options img {
+  width: 20px;
+  height: 20px;
+}
+
+.comment .cancel-save-options img:first-child {
+  margin-right: 5px;
+}

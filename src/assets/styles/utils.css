@@ -24,3 +24,9 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.no-style-btn {
+  border: none;
+  background: none;
+  padding: 0;
+}

@@ -19,6 +19,7 @@ export default function Post(props) {
   const [showComments, setShowComments] = useState(false);
   const [comments, setPostComments] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const myPost = post.userId === currentUser.uid;
 
   const userLikesPost = useMemo(() => {
@@ -76,13 +77,16 @@ export default function Post(props) {
   }
 
   const handleDeletePost = async () => {
+    setIsLoading(true)
     try {
+      setShowMenu(false);
       await removeDoc('posts', doc.id);
       removeCommentsAssociated(doc.id);
       addToastMessage('Your post was deleted successfully', 'success');
     } catch(error) {
       addToastMessage(error.message, 'error');
     }
+    setIsLoading(false);
   }
 
   return (
@@ -102,12 +106,13 @@ export default function Post(props) {
         </div>
         {myPost &&
           <div className='menu-container pointer'>
-            <img
+            <button
+              className='no-style-btn'
+              disabled={isLoading}
               onClick={handleShowMenu}
-              className='dot-menu'
-              src={menu}
-              alt='post menu'
-            />
+            >
+              <img className='dot-menu' src={menu} alt='post menu'/>
+            </button>
             {showMenu &&
               <div className='menu'>
                 <NavLink className='edit-btn' to={`/post/${doc.id}/edit`}>Edit</NavLink>

@@ -3,6 +3,8 @@ import userAvatar from '../../assets/images/user-avatar.svg';
 import { useAuth } from '../../contexts/AuthContext';
 import ReactTimeAgo from 'react-time-ago';
 import menu from '../../assets/images/menu-dots.svg';
+import check from '../../assets/images/check.svg';
+import close from '../../assets/images/close.svg';
 
 export default function Comment(props) {
   const { comment } = props;
@@ -67,10 +69,13 @@ export default function Comment(props) {
     setShowMenu(false);
   }
 
-  const handleSubmit = async (e) => {
+  const handleUpdateComment = async (e) => {
     e.preventDefault();
+    if (data.content === commentContent.trim()) {
+      return setEditMode(false);
+    }
 
-    if (commentContent.trim()) {
+    if (commentContent.trim() && data.content !== commentContent.trim()) {
       setUpdatedCommentIsLoading(true);
       try {
         await updateADoc('comments', comment.id, { content: commentContent });
@@ -83,6 +88,10 @@ export default function Comment(props) {
     }
   }
 
+  const handleCancelChanges = () => {
+    setCommentContent(data.content);
+    setEditMode(false);
+  };
 
   return (
     <div className='comment'>
@@ -98,12 +107,17 @@ export default function Comment(props) {
 
           {myComment &&
             <div className='menu-container pointer'>
-              <img
+              <button
+                className='no-style-btn'
+                disabled={isLoading}
                 onClick={handleShowMenu}
-                className={`dot-menu ${isLoading && 'not-allowed'}`}
-                src={menu}
-                alt='post menu'
-              />
+              >
+                <img
+                  className='dot-menu'
+                  src={menu}
+                  alt='post menu'
+                />
+              </button>
               {showMenu &&
                 <div className='menu'>
                   <div className='edit-btn' role='button' onClick={toggleEditMode}>Edit</div>
@@ -114,7 +128,7 @@ export default function Comment(props) {
         </div>
         <div className='text'>
         {editMode ?
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleUpdateComment}>
             <input
               autoFocus
               type='text'
@@ -124,6 +138,25 @@ export default function Comment(props) {
             />
           </form> :
           data.content
+        }
+
+        {editMode &&
+          <div className='cancel-save-options'>
+            <button
+              className='no-style-btn'
+              disabled={updatedCommentIsLoading}
+              onClick={handleUpdateComment}
+            >
+              <img src={check} alt='save comment changes'/>
+            </button>
+            <button
+              className='no-style-btn'
+              disabled={updatedCommentIsLoading}
+              onClick={handleCancelChanges}
+            >
+              <img src={close} alt='cancel comment changes'/>
+            </button>
+          </div>
         }
         </div>
       </div>
