@@ -56,7 +56,7 @@ export default function EditProfile(props) {
 
   const _updateUserAccount = () => {
     if (_fieldHasChanges('displayName')) {
-      return updateAccount(formValues.displayName.trim());
+      return updateAccount({ displayName: formValues.displayName.trim() });
     }
   }
 

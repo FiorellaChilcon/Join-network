@@ -5,6 +5,7 @@ import {
   doc, setDoc, getDoc, query, where, orderBy,
   arrayUnion, arrayRemove, deleteDoc, getDocs
 } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
 import { 
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -16,7 +17,7 @@ import {
   signInWithPopup,
   signOut
 } from 'firebase/auth';
-import { auth, db } from '../config/firebase';
+import { auth, db, st } from '../config/firebase';
 
 const AuthContext = React.createContext();
 const googleProvider = new GoogleAuthProvider();
@@ -37,7 +38,7 @@ export default function AuthProvider({ children }) {
 
   function saveUser(email, userId, photoURL = '', displayName = '') {
     return setDoc(doc(db, 'users', userId), {
-      userId, email, photoURL, cover: '', displayName, bio: ''
+      userId, email, photoURL, cover: '', displayName, bio: '', photoName: ''
     });
   }
 
@@ -57,8 +58,8 @@ export default function AuthProvider({ children }) {
     return sendPasswordResetEmail(auth, email);
   }
 
-  function updateAccount(displayName) {
-    return updateProfile(currentUser, { displayName });
+  function updateAccount(changes) {
+    return updateProfile(currentUser, changes);
   }
 
   function updateUserEmail(email) {
@@ -131,6 +132,20 @@ export default function AuthProvider({ children }) {
     });
   }
 
+  function uploadPhoto(file) {
+    const storageRef = ref(st, `${currentUser.uid}/${file.name}`);
+    return uploadBytesResumable(storageRef, file);
+  }
+
+  function getPhotoUrl(refFile) {
+    return getDownloadURL(refFile);
+  }
+
+  function removeUserPhotoFromStorage(photoName) {
+    const storageRef = ref(st, `${currentUser.uid}/${photoName}`);
+    return deleteObject(storageRef);
+  }
+
   const userName = useMemo(() => {
     if (currentUser) {
       const { email, displayName } = currentUser;
@@ -194,6 +209,9 @@ export default function AuthProvider({ children }) {
     getPost,
     getMyPosts,
     removeCommentsAssociated,
+    uploadPhoto,
+    getPhotoUrl,
+    removeUserPhotoFromStorage,
     userName,
     completeUserName
   };
