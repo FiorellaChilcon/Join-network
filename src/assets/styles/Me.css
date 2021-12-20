@@ -1,0 +1,59 @@
+.profile-header {
+  margin-bottom: 100px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.profile-header h1 {
+  margin-top: 100px;
+}
+
+.profile-header .edit-box {
+  display: flex;
+}
+
+.profile-header .edit-box button {
+  margin-left: 10px;
+}
+
+.profile-header .edit-box input[type="text"] {
+  background: none;
+  border: solid 2px #0469dd;
+  border-radius: 5px;
+  font-size: 15px;
+  padding: 5px;
+  outline: none;
+}
+
+.profile-header .edit-box img {
+  height: 18px;
+  width: 18px;
+}
+
+.pics-container {
+  position: relative;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.big-user-pic-container  {
+  position: absolute;
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  background-color: white;
+  overflow: hidden;
+  align-self: center;
+  bottom: -84px;
+}
+
+.cover-photo {
+  width: 100%;
+  max-width: 940px;
+  height: 348px;
+  background-color: rgb(80, 80, 80);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}

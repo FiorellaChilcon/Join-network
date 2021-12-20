@@ -95,6 +95,11 @@ export default function AuthProvider({ children }) {
     return onSnapshot(q, callback);
   }
 
+  function getMyPosts(callback) {
+    const q = query(collection(db, 'posts'), where('userId', '==', currentUser.uid), orderBy('createdAt', 'desc'));
+    return onSnapshot(q, callback);
+  }
+
   function getPost(postId) {
     return getDoc(doc(db, 'posts', postId));
   }
@@ -133,6 +138,15 @@ export default function AuthProvider({ children }) {
       const field = displayName ? displayName : email;
   
       return field.split(char)[0];
+    }
+
+    return '';
+  }, [currentUser]);
+
+  const completeUserName = useMemo(() => {
+    if (currentUser) {
+      const { email, displayName } = currentUser;
+      return displayName ? displayName : email.split('@')[0];
     }
 
     return '';
@@ -178,8 +192,10 @@ export default function AuthProvider({ children }) {
     addToastMessage,
     updateADoc,
     getPost,
+    getMyPosts,
     removeCommentsAssociated,
-    userName
+    userName,
+    completeUserName
   };
 
   return (
