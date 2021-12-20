@@ -25,7 +25,7 @@ export default function CreatePost() {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      await addPost(content, privacy, '');
+      await addPost(content, privacy);
       addToastMessage('Your post was published successfully', 'success');
       return navigate('/');
     } catch (error) {

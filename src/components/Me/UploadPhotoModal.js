@@ -51,7 +51,7 @@ export default function UploadPhotoModal(props) {
           <img src={close} alt='close modal'/>
         </button>
         <form className='photo-form'>
-          <input disabled={isLoading} ref={inputFile} type='file' onChange={handleChange} />
+          <input disabled={isLoading} ref={inputFile} accept='image/png, image/jpeg' type='file' onChange={handleChange} />
           {photoSelected &&
             <div className='photo-selected-container'>
               <button disabled={isLoading} className='clear-btn' onClick={clearPhoto}><img src={close} alt='clear'/></button>

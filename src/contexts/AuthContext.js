@@ -38,7 +38,7 @@ export default function AuthProvider({ children }) {
 
   function saveUser(email, userId, photoURL = '', displayName = '') {
     return setDoc(doc(db, 'users', userId), {
-      userId, email, photoURL, cover: '', displayName, bio: '', photoName: ''
+      userId, email, photoURL, cover: '', coverName: '', displayName, bio: '', photoName: ''
     });
   }
 
@@ -75,9 +75,9 @@ export default function AuthProvider({ children }) {
   }
   // end auth user
 
-  function addPost(content, privacy, photo) {
+  function addPost(content, privacy, photo = '', photoName = '') {
     return addDoc(collection(db, 'posts'), {
-      userId: currentUser.uid, content, photo, privacy, likes: [], createdAt: Date.now()
+      userId: currentUser.uid, content, photo, photoName, privacy, likes: [], createdAt: Date.now()
     });
   }
 
