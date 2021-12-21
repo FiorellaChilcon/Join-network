@@ -10,6 +10,7 @@ import commentIcon from '../../assets/images/comment.svg';
 import CommentsContainer from './CommentsContainer';
 import ReactTimeAgo from 'react-time-ago';
 import { NavLink } from 'react-router-dom';
+import useClickOutside from '../../customHooks/useClickOutside';
 
 export default function Post(props) {
   const { doc } = props;
@@ -20,6 +21,7 @@ export default function Post(props) {
   const [comments, setPostComments] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [postMenu, trigger] = useClickOutside(showMenu, () => { setShowMenu(false) });
   const myPost = post.userId === currentUser.uid;
 
   const userLikesPost = useMemo(() => {
@@ -113,11 +115,12 @@ export default function Post(props) {
               className='no-style-btn'
               disabled={isLoading}
               onClick={handleShowMenu}
+              ref={trigger}
             >
               <img className='dot-menu' src={menu} alt='post menu'/>
             </button>
             {showMenu &&
-              <div className='menu'>
+              <div className='menu' ref={postMenu}>
                 <NavLink className='edit-btn' to={`/post/${doc.id}/edit`}>Edit</NavLink>
                 <div className='delete-btn' role='button' onClick={handleDeletePost}>Delete</div>
               </div>}

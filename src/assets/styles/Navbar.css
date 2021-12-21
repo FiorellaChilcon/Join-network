@@ -52,7 +52,7 @@ nav a.active {
 }
 
 .menu-links {
-  display: none;
+  display: flex;
   box-sizing: border-box;
   flex-direction: column;
   width: 180px;

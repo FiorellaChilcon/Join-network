@@ -68,7 +68,7 @@ export default function CreatePost() {
           </div>
           <div className='create-header'>
             <span>{userName}</span>
-            <select onChange={handlePrivacyChange}>
+            <select onChange={handlePrivacyChange} disabled={isLoading}>
               <option value='public'>public</option>
               <option value='private'>private</option>
             </select>

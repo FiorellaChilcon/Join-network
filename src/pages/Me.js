@@ -7,6 +7,7 @@ import { NavLink } from 'react-router-dom';
 import Post from '../components/Home/Post';
 import UploadPhotoModal from '../components/Me/UploadPhotoModal';
 import UploadCoverModal from '../components/Me/UploadCoverModal';
+import useClickOutside from '../customHooks/useClickOutside';
 
 export default function Me() {
   const { addToastMessage, updateUser, currentUser, userName, getMyPosts, completeUserName, getUserDoc, updateAccount, removeUserPhotoFromStorage } = useAuth();
@@ -25,6 +26,8 @@ export default function Me() {
   const [showCoverPhotoMenu, setShowCoverPhotoMenu] = useState(false);
   const [coverChangeIsLoading, setCoverChangeIsLoading] = useState(false);
   const [showCoverModal, setShowCoverModal] = useState(false);
+  const [photoMenu, triggerPhotoMenu] = useClickOutside(showPhotoMenu, () => { setShowPhotoMenu(false) });
+  const [coverPhotoMenu, triggerCoverPhotoMenu] = useClickOutside(showCoverPhotoMenu, () => { setShowCoverPhotoMenu(false) });
 
   const toggleShowCoverPhotoMenu = () => {
     setShowCoverPhotoMenu((prev) => !prev);
@@ -164,13 +167,15 @@ export default function Me() {
               disabled={coverChangeIsLoading}
               onClick={toggleShowCoverPhotoMenu}
               className='camera-btn'
+              ref={triggerCoverPhotoMenu}
             >
               <img src={cameraIcon} alt='update my cover pic'/>
             </button>
-            {showCoverPhotoMenu && <div className='change-photo-menu'>
-              {userCover && <button onClick={handleRemoveCoverPhoto} className='no-style-btn'>Remove photo</button>}
-              <button onClick={openUploadCoverModal} className={`no-style-btn ${!userCover && 'pt-10px'}`}>Update photo</button>
-            </div>}
+            {showCoverPhotoMenu &&
+              <div className='change-photo-menu' ref={coverPhotoMenu}>
+                {userCover && <button onClick={handleRemoveCoverPhoto} className='no-style-btn'>Remove photo</button>}
+                <button onClick={openUploadCoverModal} className={`no-style-btn ${!userCover && 'pt-10px'}`}>Update photo</button>
+              </div>}
           </div>
           <div className='big-user-pic-container'>
             <div className='big-user-pic'>
@@ -180,13 +185,15 @@ export default function Me() {
               disabled={photoChangeIsLoading}
               onClick={toggleShowPhotoMenu}
               className='camera-btn'
+              ref={triggerPhotoMenu}
             >
               <img src={cameraIcon} alt='update my profile pic'/>
             </button>
-            {showPhotoMenu && <div className='change-photo-menu'>
-              {currentUser.photoURL && <button onClick={handleRemoveUserPhoto} className='no-style-btn'>Remove photo</button>}
-              <button onClick={openUploadPhotoModal} className={`no-style-btn ${!userCover && 'pt-10px'}`}>Update photo</button>
-            </div>}
+            {showPhotoMenu &&
+              <div className='change-photo-menu' ref={photoMenu}>
+                {currentUser.photoURL && <button onClick={handleRemoveUserPhoto} className='no-style-btn'>Remove photo</button>}
+                <button onClick={openUploadPhotoModal} className={`no-style-btn ${!userCover && 'pt-10px'}`}>Update photo</button>
+              </div>}
           </div>
         </div>
         <h1>{completeUserName}</h1>
