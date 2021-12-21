@@ -6,6 +6,7 @@ import cameraIcon from '../assets/images/camera.svg';
 import { NavLink } from 'react-router-dom';
 import Post from '../components/Home/Post';
 import UploadPhotoModal from '../components/Me/UploadPhotoModal';
+import UploadCoverModal from '../components/Me/UploadCoverModal';
 
 export default function Me() {
   const { addToastMessage, updateUser, currentUser, userName, getMyPosts, completeUserName, getUserDoc, updateAccount, removeUserPhotoFromStorage } = useAuth();
@@ -17,8 +18,26 @@ export default function Me() {
   const [showPhotoMenu, setShowPhotoMenu] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [userBio, setUserBio] = useState('');
-  const [bio, setBio] = useState('');
+  const [newBio, setNewBio] = useState('');
   const [userPhotoName, setUserPhotoName] = useState('');
+  const [userCover, setUserCover] = useState('');
+  const [coverName, setUserCoverName] = useState('');
+  const [showCoverPhotoMenu, setShowCoverPhotoMenu] = useState(false);
+  const [coverChangeIsLoading, setCoverChangeIsLoading] = useState(false);
+  const [showCoverModal, setShowCoverModal] = useState(false);
+
+  const toggleShowCoverPhotoMenu = () => {
+    setShowCoverPhotoMenu((prev) => !prev);
+  }
+
+  const openUploadCoverModal = () => {
+    setShowCoverPhotoMenu(false);
+    setShowCoverModal(true)
+  }
+
+  const closeUploadCoverModal = () => {
+    setShowCoverModal(false)
+  }
 
   const openUploadPhotoModal = () => {
     setShowPhotoMenu(false);
@@ -35,20 +54,20 @@ export default function Me() {
 
   const toggleEditMode = () => {
     setEditMode((prev) => !prev);
-    setBio(userBio);
+    setNewBio(userBio);
   }
 
   const handleChangeBio = ({ target }) => {
-    setBio(target.value);
+    setNewBio(target.value);
   }
 
   const handleSubmitBio = async (e) => {
     e.preventDefault();
-    if (bio.trim() && bio.trim() !== user.bio) {
+    if (newBio.trim() && newBio.trim() !== user.bio) {
       setBioChangeIsLoading(true);
       try {
-        await updateUser({ bio });
-        setUserBio(bio);
+        await updateUser({ bio: newBio });
+        setUserBio(newBio);
         addToastMessage('Your bio was updated successfully', 'success');
       } catch (error) {
         addToastMessage(error.message, 'error');
@@ -75,8 +94,30 @@ export default function Me() {
     setPhotoChangeIsLoading(false);
   }
 
+  const handleRemoveCoverPhoto = async (e) => {
+    setCoverChangeIsLoading(true);
+    setShowCoverPhotoMenu(false);
+    try {
+      if (userCover?.includes('firebasestorage')) {
+        removeUserPhotoFromStorage(coverName);
+      }
+      await updateUser({ cover: '', coverName: '' });
+      setUserCover('');
+      setUserCoverName('');
+      addToastMessage('Your cover was updated successfully', 'success');
+    } catch (error) {
+      addToastMessage(error.message, 'error');
+    }
+    setCoverChangeIsLoading(false);
+  }
+
   const onSetUserPhotoName = (photo) => {
     setUserPhotoName(photo);
+  }
+
+  const onSetUserCoverName = (photoName, photo) => {
+    setUserCoverName(photoName);
+    setUserCover(photo);
   }
 
   useEffect(() => {
@@ -97,9 +138,11 @@ export default function Me() {
       const resp = await getUserDoc(currentUser.uid);
       const userData = resp.data();
       setUser(userData);
-      setBio(userData.bio);
+      setNewBio(userData.bio);
       setUserBio(userData.bio);
       setUserPhotoName(userData.photoName);
+      setUserCover(userData.cover);
+      setUserCoverName(userData.coverName);
     };
 
     fetchUser();
@@ -113,7 +156,22 @@ export default function Me() {
     <div className='home-container pt-0'>
       <div className='profile-header'>
         <div className='pics-container'>
-          <div className='cover-photo'></div>
+          <div className='cover-photo'>
+            <div className='cover-pic'>
+              {userCover && <img className='fit-img' src={userCover} alt='user'/>}
+            </div>
+            <button
+              disabled={coverChangeIsLoading}
+              onClick={toggleShowCoverPhotoMenu}
+              className='camera-btn'
+            >
+              <img src={cameraIcon} alt='update my cover pic'/>
+            </button>
+            {showCoverPhotoMenu && <div className='change-photo-menu'>
+              {userCover && <button onClick={handleRemoveCoverPhoto} className='no-style-btn'>Remove photo</button>}
+              <button onClick={openUploadCoverModal} className='no-style-btn'>Update photo</button>
+            </div>}
+          </div>
           <div className='big-user-pic-container'>
             <div className='big-user-pic'>
               <img className='fit-img' src={currentUser.photoURL || userAvatar} alt='user'/>
@@ -139,7 +197,7 @@ export default function Me() {
                 disabled={bioChangeIsLoading}
                 onChange={handleChangeBio}
                 type='text'
-                value={bioChangeIsLoading ? 'updating...' : bio}  
+                value={bioChangeIsLoading ? 'updating...' : newBio}  
               />
             </form> :
             <span>{userBio ? userBio : 'Update your bio!'}</span>
@@ -165,6 +223,14 @@ export default function Me() {
           closeModal={closeUploadPhotoModal}
           userPhotoName={userPhotoName}
           onSetUserPhotoName={onSetUserPhotoName}
+        />
+      }
+      {showCoverModal &&
+        <UploadCoverModal
+          closeModal={closeUploadCoverModal}
+          userCoverName={coverName}
+          userCover={userCover}
+          onSetUserPhotoName={onSetUserCoverName}
         />
       }
     </div>
