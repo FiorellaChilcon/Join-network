@@ -10,6 +10,10 @@ body {
   font-size: 15px;
 }
 
+.post-photo, .post-photo img {
+  width: 100%;
+}
+
 .post .font-grey {
   font-size: 13px;
   color: #65676B;

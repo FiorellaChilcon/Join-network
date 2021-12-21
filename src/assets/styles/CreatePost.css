@@ -54,10 +54,23 @@
   font-size: 15px;
 }
 
-.create-post button {
+.create-post button:last-child {
   color: white;
   background-color: #1b74e4;
   border: none;
   padding: 10px;
   border-radius: 5px;
+}
+
+.create-post-container input[type="file"] {
+  margin-top: 20px;
+}
+
+.post-photo-selected-container {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  max-width: 200px;
+  max-height: 200px;
+  margin-top: 20px;
 }

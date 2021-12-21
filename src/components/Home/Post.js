@@ -14,7 +14,7 @@ import { NavLink } from 'react-router-dom';
 export default function Post(props) {
   const { doc } = props;
   const post = doc.data();
-  const { currentUser, getUserDoc, togglePostLike, getPostComments, removeDoc, addToastMessage, removeCommentsAssociated } = useAuth();
+  const { currentUser, getUserDoc, togglePostLike, getPostComments, removeDoc, addToastMessage, removeCommentsAssociated, removeUserPhotoFromStorage } = useAuth();
   const [userPost, setUserPost] = useState({});
   const [showComments, setShowComments] = useState(false);
   const [comments, setPostComments] = useState([]);
@@ -82,6 +82,9 @@ export default function Post(props) {
       setShowMenu(false);
       await removeDoc('posts', doc.id);
       removeCommentsAssociated(doc.id);
+      if (post.photo) {
+        removeUserPhotoFromStorage(post.photoName);
+      }
       addToastMessage('Your post was deleted successfully', 'success');
     } catch(error) {
       addToastMessage(error.message, 'error');
@@ -121,9 +124,16 @@ export default function Post(props) {
           </div>
         }
       </div>
-      <div className='content'>
-        <span>{post.content}</span>
-      </div>
+      {post.content &&
+        <div className='content'>
+          <span>{post.content}</span>
+        </div>
+      }
+      {post.photo &&
+        <div className='post-photo'>
+          <img src={post.photo} alt='post'/>
+        </div>
+      }
       <div className='interact'>
         <div className='pointer'>
           <img
