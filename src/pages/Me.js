@@ -169,7 +169,7 @@ export default function Me() {
             </button>
             {showCoverPhotoMenu && <div className='change-photo-menu'>
               {userCover && <button onClick={handleRemoveCoverPhoto} className='no-style-btn'>Remove photo</button>}
-              <button onClick={openUploadCoverModal} className='no-style-btn'>Update photo</button>
+              <button onClick={openUploadCoverModal} className={`no-style-btn ${!userCover && 'pt-10px'}`}>Update photo</button>
             </div>}
           </div>
           <div className='big-user-pic-container'>
@@ -185,7 +185,7 @@ export default function Me() {
             </button>
             {showPhotoMenu && <div className='change-photo-menu'>
               {currentUser.photoURL && <button onClick={handleRemoveUserPhoto} className='no-style-btn'>Remove photo</button>}
-              <button onClick={openUploadPhotoModal} className='no-style-btn'>Update photo</button>
+              <button onClick={openUploadPhotoModal} className={`no-style-btn ${!userCover && 'pt-10px'}`}>Update photo</button>
             </div>}
           </div>
         </div>

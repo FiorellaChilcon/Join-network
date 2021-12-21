@@ -52,7 +52,8 @@
   display: flex;
   justify-content: center;
   position: relative;
-  width: 70%;
+  max-width: 70%;
+  max-height: 70%;
 }
 
 .photo-form .photo-selected {
@@ -81,4 +82,8 @@
 .close-btn img {
   width: 18px;
   height: 18px;
+}
+
+.pt-10px {
+  padding-top: 10px !important;
 }
