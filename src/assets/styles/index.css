@@ -5,10 +5,12 @@
 @import './ForgotPassword.css';
 @import './EditAccount.css';
 @import './CreatePost.css';
+@import './Me.css';
 
 /* components */
 @import './Post.css';
 @import './Comments.css';
+@import './UploadPhotoModal.css';
 
 /* commons */
 @import './Navbar.css';

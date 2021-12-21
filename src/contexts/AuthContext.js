@@ -3,8 +3,9 @@ import FlashMessage from '../common/FlashMessage';
 import {
   collection, addDoc, onSnapshot, updateDoc,
   doc, setDoc, getDoc, query, where, orderBy,
-  arrayUnion, arrayRemove, deleteDoc
+  arrayUnion, arrayRemove, deleteDoc, getDocs
 } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
 import { 
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -16,7 +17,7 @@ import {
   signInWithPopup,
   signOut
 } from 'firebase/auth';
-import { auth, db } from '../config/firebase';
+import { auth, db, st } from '../config/firebase';
 
 const AuthContext = React.createContext();
 const googleProvider = new GoogleAuthProvider();
@@ -37,7 +38,7 @@ export default function AuthProvider({ children }) {
 
   function saveUser(email, userId, photoURL = '', displayName = '') {
     return setDoc(doc(db, 'users', userId), {
-      userId, email, photoURL, cover: '', displayName, bio: ''
+      userId, email, photoURL, cover: '', coverName: '', displayName, bio: '', photoName: ''
     });
   }
 
@@ -57,8 +58,8 @@ export default function AuthProvider({ children }) {
     return sendPasswordResetEmail(auth, email);
   }
 
-  function updateAccount(displayName) {
-    return updateProfile(currentUser, { displayName });
+  function updateAccount(changes) {
+    return updateProfile(currentUser, changes);
   }
 
   function updateUserEmail(email) {
@@ -74,9 +75,9 @@ export default function AuthProvider({ children }) {
   }
   // end auth user
 
-  function addPost(content, privacy, photo) {
+  function addPost(content, privacy, photo = '', photoName = '') {
     return addDoc(collection(db, 'posts'), {
-      userId: currentUser.uid, content, photo, privacy, likes: [], createdAt: Date.now()
+      userId: currentUser.uid, content, photo, photoName, privacy, likes: [], createdAt: Date.now()
     });
   }
 
@@ -86,12 +87,17 @@ export default function AuthProvider({ children }) {
     });
   }
 
-  function updatePost(postId, changes) {
-    return updateDoc(doc(db, 'posts', postId), changes);
+  function updateADoc(collectionName, docId, changes) {
+    return updateDoc(doc(db, collectionName, docId), changes);
   }
 
   function getPosts(callback) {
     const q = query(collection(db, 'posts'), where('privacy', '==', 'public'), orderBy('createdAt', 'desc'));
+    return onSnapshot(q, callback);
+  }
+
+  function getMyPosts(callback) {
+    const q = query(collection(db, 'posts'), where('userId', '==', currentUser.uid), orderBy('createdAt', 'desc'));
     return onSnapshot(q, callback);
   }
 
@@ -118,6 +124,28 @@ export default function AuthProvider({ children }) {
     return deleteDoc(doc(db, collection, docId));
   }
 
+  async function removeCommentsAssociated(postId) {
+    const q = query(collection(db, 'comments'), where('postId', '==', postId));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      removeDoc('comments', doc.id);
+    });
+  }
+
+  function uploadPhoto(file) {
+    const storageRef = ref(st, `${currentUser.uid}/${file.name}`);
+    return uploadBytesResumable(storageRef, file);
+  }
+
+  function getPhotoUrl(refFile) {
+    return getDownloadURL(refFile);
+  }
+
+  function removeUserPhotoFromStorage(photoName) {
+    const storageRef = ref(st, `${currentUser.uid}/${photoName}`);
+    return deleteObject(storageRef);
+  }
+
   const userName = useMemo(() => {
     if (currentUser) {
       const { email, displayName } = currentUser;
@@ -125,6 +153,15 @@ export default function AuthProvider({ children }) {
       const field = displayName ? displayName : email;
   
       return field.split(char)[0];
+    }
+
+    return '';
+  }, [currentUser]);
+
+  const completeUserName = useMemo(() => {
+    if (currentUser) {
+      const { email, displayName } = currentUser;
+      return displayName ? displayName : email.split('@')[0];
     }
 
     return '';
@@ -168,9 +205,15 @@ export default function AuthProvider({ children }) {
     getPostComments,
     removeDoc,
     addToastMessage,
-    updatePost,
+    updateADoc,
     getPost,
-    userName
+    getMyPosts,
+    removeCommentsAssociated,
+    uploadPhoto,
+    getPhotoUrl,
+    removeUserPhotoFromStorage,
+    userName,
+    completeUserName
   };
 
   return (

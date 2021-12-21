@@ -10,15 +10,18 @@ import commentIcon from '../../assets/images/comment.svg';
 import CommentsContainer from './CommentsContainer';
 import ReactTimeAgo from 'react-time-ago';
 import { NavLink } from 'react-router-dom';
+import useClickOutside from '../../customHooks/useClickOutside';
 
 export default function Post(props) {
   const { doc } = props;
   const post = doc.data();
-  const { currentUser, getUserDoc, togglePostLike, getPostComments, removeDoc, addToastMessage } = useAuth();
+  const { currentUser, getUserDoc, togglePostLike, getPostComments, removeDoc, addToastMessage, removeCommentsAssociated, removeUserPhotoFromStorage } = useAuth();
   const [userPost, setUserPost] = useState({});
   const [showComments, setShowComments] = useState(false);
   const [comments, setPostComments] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [postMenu, trigger] = useClickOutside(showMenu, () => { setShowMenu(false) });
   const myPost = post.userId === currentUser.uid;
 
   const userLikesPost = useMemo(() => {
@@ -76,12 +79,19 @@ export default function Post(props) {
   }
 
   const handleDeletePost = async () => {
+    setIsLoading(true)
     try {
+      setShowMenu(false);
       await removeDoc('posts', doc.id);
+      removeCommentsAssociated(doc.id);
+      if (post.photo) {
+        removeUserPhotoFromStorage(post.photoName);
+      }
       addToastMessage('Your post was deleted successfully', 'success');
     } catch(error) {
       addToastMessage(error.message, 'error');
     }
+    setIsLoading(false);
   }
 
   return (
@@ -101,23 +111,32 @@ export default function Post(props) {
         </div>
         {myPost &&
           <div className='menu-container pointer'>
-            <img
+            <button
+              className='no-style-btn'
+              disabled={isLoading}
               onClick={handleShowMenu}
-              className='dot-menu'
-              src={menu}
-              alt='post menu'
-            />
+              ref={trigger}
+            >
+              <img className='dot-menu' src={menu} alt='post menu'/>
+            </button>
             {showMenu &&
-              <div className='menu'>
-                <NavLink to={`/post/${doc.id}/edit`}>Edit</NavLink>
-                <div role='button' onClick={handleDeletePost}>Delete</div>
+              <div className='menu' ref={postMenu}>
+                <NavLink className='edit-btn' to={`/post/${doc.id}/edit`}>Edit</NavLink>
+                <div className='delete-btn' role='button' onClick={handleDeletePost}>Delete</div>
               </div>}
           </div>
         }
       </div>
-      <div className='content'>
-        <span>{post.content}</span>
-      </div>
+      {post.content &&
+        <div className='content'>
+          <span>{post.content}</span>
+        </div>
+      }
+      {post.photo &&
+        <div className='post-photo'>
+          <img src={post.photo} alt='post'/>
+        </div>
+      }
       <div className='interact'>
         <div className='pointer'>
           <img

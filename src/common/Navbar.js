@@ -1,28 +1,26 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { isMobile } from 'react-device-detect';
-import menuIcon from '../assets/images/bars-solid.svg'
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import userAvatar from '../assets/images/user-avatar.svg';
+import useClickOutside from '../customHooks/useClickOutside';
 
 export default function Navbar() {
-  const navbar = useRef(null);
   const { logOut, currentUser, addToastMessage } = useAuth();
-  const navigate = useNavigate()
-  const toogleNavbar = () => {
-    navbar.current.classList.toggle('flex');
+  const [showNavbar, setShowNavbar] = useState(false);
+  const navigate = useNavigate();
+  const closeMenu = () => {
+    setShowNavbar(false);
   };
-
-  const handleClick = () => {
-    if (isMobile) {
-      navbar.current.classList.remove('flex');
-    }
+  const [navbar, trigger] = useClickOutside(showNavbar, closeMenu);
+  const toogleNavbar = () => {
+    setShowNavbar((prev) => !prev);
   };
 
   const handleSignOut = async () => {
     try {
       await logOut();
-      handleClick();
+      closeMenu();
       navigate('/sign-in');
     } catch (error) {
       addToastMessage(error.message, 'error');
@@ -31,30 +29,34 @@ export default function Navbar() {
 
   return (
     <nav>
-      <div className="logo">
+      <div className='logo'>
         {currentUser ?
-          <NavLink to='/' onClick={handleClick}>
+          <NavLink to='/'>
             <img src='logo192.png' alt='go  home'/>
           </NavLink>
           : <div><img src='logo192.png' alt='app logo'/></div>
         }
       </div>
+      { currentUser &&
       <div
         role='button'
         className='menu-btn'
         onClick={toogleNavbar}
+        ref={trigger}
       >
-        <img src={menuIcon} alt='open menu' />
-      </div>
-      <div
-        className='menu-links'
-        ref={navbar}
-      >
-        {currentUser && <NavLink to='/' onClick={handleClick}>Home</NavLink>}
-        {currentUser && <button onClick={handleSignOut}>Sign Out</button>}
-        {!currentUser && <NavLink to='/sign-in' onClick={handleClick}>Sign in</NavLink>}
-        {!currentUser && <NavLink to='/sign-up' onClick={handleClick}>Sign up</NavLink>}
-      </div>
+        <img className='fit-img' src={currentUser.photoURL || userAvatar} alt='go to my profile'/>
+      </div>}
+      {(currentUser && showNavbar) &&
+        <div
+          className='menu-links'
+          ref={navbar}
+        >
+          <NavLink to='/' onClick={closeMenu}>Home</NavLink>
+          <NavLink to='/me' onClick={closeMenu}>Profile</NavLink>
+          <NavLink to='/edit-account' onClick={closeMenu}>Account</NavLink>
+          <button onClick={handleSignOut}>Sign Out</button>
+        </div>
+      }
     </nav>
   );
 }

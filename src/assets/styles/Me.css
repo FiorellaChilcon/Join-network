@@ -1,0 +1,123 @@
+.profile-header {
+  margin-bottom: 60px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.profile-header h1 {
+  margin-top: 100px;
+}
+
+.profile-header .edit-box {
+  display: flex;
+}
+
+.profile-header .edit-box button {
+  margin-left: 10px;
+}
+
+.profile-header .edit-box input[type="text"] {
+  background: none;
+  border: solid 2px #0469dd;
+  border-radius: 5px;
+  font-size: 15px;
+  padding: 5px;
+  outline: none;
+}
+
+.profile-header .edit-box img {
+  height: 18px;
+  width: 18px;
+}
+
+.pics-container {
+  position: relative;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.big-user-pic-container  {
+  position: absolute;
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  align-self: center;
+  bottom: -84px;
+}
+
+.big-user-pic  {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: white;
+  overflow: hidden;
+}
+
+.big-user-pic-container .camera-btn {
+  width: 39px;
+  height: 39px;
+  background-color: #e4e6eb;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 10px;
+  right: 5px;
+  border: none;
+}
+
+.camera-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.change-photo-menu {
+  background-color: white;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  width: 120px;
+  box-shadow: 0px 0px 30px -7px #b2b2b2;
+  position: absolute;
+  right: 50px;
+  bottom: 0;
+}
+
+.change-photo-menu button:first-child {
+  padding: 10px 8px 5px;
+}
+
+.change-photo-menu button:last-child {
+  padding: 5px 8px 10px;
+}
+
+.change-photo-menu button:hover {
+  background-color: rgb(241, 241, 241);
+}
+
+.cover-photo {
+  width: 100%;
+  max-width: 940px;
+  height: 348px;
+  background-color: rgb(80, 80, 80);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-pic {
+  width: 100%;
+  height: 100%;
+}
+
+.cover-photo .camera-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 39px;
+  height: 39px;
+  border: none;
+  background-color: rgba(206, 206, 206, 0.322);
+  border-bottom-right-radius: 10px;
+}
