@@ -31,10 +31,11 @@ export default function UploadCoverModal(props) {
       if (userCover?.includes('firebasestorage')) {
         removeUserPhotoFromStorage(userCoverName);
       }
-      const snapshot = await uploadPhoto(file);
+      const fileName = `${Date.now()}-${file.name}`;
+      const snapshot = await uploadPhoto(file, fileName);
       const cover = await getPhotoUrl(snapshot.ref);
-      updateUser({ cover, coverName: file.name });
-      onSetUserPhotoName(file.name, cover);
+      updateUser({ cover, coverName: fileName });
+      onSetUserPhotoName(fileName, cover);
       closeModal();
       addToastMessage('Your changes were saved!', 'success');
     } catch (error) {

@@ -25,7 +25,7 @@ export default function EditPost() {
     return () => {
       abortController.abort();
     };
-  }, [getPost, postId]);
+  }, []); //eslint-disable-line
 
   const isDisabled = useMemo(() => {
     return !content.trim() || isLoading;

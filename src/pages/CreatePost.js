@@ -32,9 +32,9 @@ export default function CreatePost() {
       let photo = '';
       let photoName = '';
       if (file) {
-        const photoSnapshot = await uploadPhoto(file);
+        photoName = `${Date.now()}-${file.name}`;
+        const photoSnapshot = await uploadPhoto(file, photoName);
         photo = await getPhotoUrl(photoSnapshot.ref);
-        photoName = file.name;
       }
       await addPost(content, privacy, photo, photoName);
       addToastMessage('Your post was published successfully', 'success');

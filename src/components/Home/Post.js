@@ -16,7 +16,7 @@ export default function Post(props) {
   const { doc } = props;
   const post = doc.data();
   const { currentUser, getUserDoc, togglePostLike, getPostComments, removeDoc, addToastMessage, removeCommentsAssociated, removeUserPhotoFromStorage } = useAuth();
-  const [userPost, setUserPost] = useState({});
+  const [userPost, setUserPost] = useState({ email: '', displayName: '', photoURL: '' });
   const [showComments, setShowComments] = useState(false);
   const [comments, setPostComments] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
@@ -32,7 +32,9 @@ export default function Post(props) {
     const abortController = new AbortController();
     const fetchUser = async () => {
       const resp = await getUserDoc(post.userId);
-      setUserPost(resp.data())
+      if (resp.exists()) {
+        setUserPost(resp.data());
+      }
     }
 
     if (myPost) {
@@ -44,7 +46,7 @@ export default function Post(props) {
     return () =>  {
       abortController.abort();
     };
-  }, [post, currentUser, getUserDoc, myPost]);
+  }, []); //eslint-disable-line
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -55,11 +57,10 @@ export default function Post(props) {
       unsubscribe();
       abortController.abort();
     };
-  }, [doc, getPostComments]);
+  }, []); //eslint-disable-line
 
   const userName = useMemo(() => {
-    const { email, displayName } = userPost;
-    return displayName ? displayName : email?.split('@')[0];
+    return userPost?.displayName ? userPost?.displayName : userPost?.email?.split('@')[0];
   }, [userPost]);
 
   const privacyIcon = useMemo(() => {
@@ -98,7 +99,7 @@ export default function Post(props) {
     <div className='post'>
       <div className='create-post-head-wrapper'>
         <div className='user-pic-container '>
-          <img className='fit-img' src={userPost.photoURL || userAvatar} alt='user'/>
+          <img className='fit-img' src={userPost?.photoURL || userAvatar} alt='user'/>
         </div>
         <div className='create-header'>
           <span>{userName}</span>

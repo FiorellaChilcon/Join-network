@@ -31,11 +31,12 @@ export default function UploadPhotoModal(props) {
       if (currentUser.photoURL?.includes('firebasestorage')) {
         removeUserPhotoFromStorage(userPhotoName);
       }
-      const snapshot = await uploadPhoto(file);
+      const fileName = `${Date.now()}-${file.name}`;
+      const snapshot = await uploadPhoto(file, fileName);
       const photoURL = await getPhotoUrl(snapshot.ref);
-      updateAccount({ photoURL, photoName: file.name });
-      updateUser({ photoURL, photoName: file.name });
-      onSetUserPhotoName(file.name);
+      updateAccount({ photoURL });
+      updateUser({ photoURL, photoName: fileName });
+      onSetUserPhotoName(fileName);
       closeModal();
       addToastMessage('Your changes were saved!', 'success');
     } catch (error) {

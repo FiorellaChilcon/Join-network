@@ -132,8 +132,8 @@ export default function AuthProvider({ children }) {
     });
   }
 
-  function uploadPhoto(file) {
-    const storageRef = ref(st, `${currentUser.uid}/${file.name}`);
+  function uploadPhoto(file, fileName) {
+    const storageRef = ref(st, `${currentUser.uid}/${fileName}`);
     return uploadBytesResumable(storageRef, file);
   }
 

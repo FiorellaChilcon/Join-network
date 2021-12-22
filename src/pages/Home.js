@@ -18,7 +18,7 @@ export default function Home() {
       unsubscribe();
       abortController.abort();
     };
-  }, [getPosts]);
+  }, []); // eslint-disable-line
 
   return (
     <div className='home-container'>

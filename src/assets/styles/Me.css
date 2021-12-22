@@ -81,6 +81,7 @@
   position: absolute;
   right: 50px;
   bottom: 0;
+  z-index: 1;
 }
 
 .change-photo-menu button:first-child {

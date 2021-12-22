@@ -7,7 +7,7 @@ function Toast(props) {
       removeFlashMessage(toast.date);
     }, 5000);
     return () => { clearTimeout(timerId) };
-  }, [removeFlashMessage, toast]);
+  }, []); // eslint-disable-line
 
   return (
     <div className={`flash-message ${toast.type}`}>{toast.message}</div>

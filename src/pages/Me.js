@@ -133,7 +133,7 @@ export default function Me() {
       unsubscribe();
       abortController.abort();
     };
-  }, [getMyPosts]);
+  }, []); // eslint-disable-line
 
   useEffect(() => {
     const abortController = new AbortController();

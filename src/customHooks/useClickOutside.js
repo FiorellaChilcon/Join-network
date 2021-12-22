@@ -15,6 +15,7 @@ export default function useClickOutside(isOpen, close) {
     } else {
       document.removeEventListener('mousedown', clickOutside);
     }
+
     return () => {
       document.removeEventListener('mousedown', clickOutside);
     };

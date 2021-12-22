@@ -25,7 +25,7 @@ export default function Comment(props) {
       setUserComment(resp.data())
     }
 
-    if (data.userId === currentUser.uid) {
+    if (myComment) {
       setUserComment(currentUser)
     } else {
       fetchUser();
@@ -34,7 +34,7 @@ export default function Comment(props) {
     return () =>  {
       abortController.abort();
     };
-  }, [data, currentUser, getUserDoc]);
+  }, []); //eslint-disable-line
 
   const userName = useMemo(() => {
     const { email, displayName } = userComment;
